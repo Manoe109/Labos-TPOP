@@ -1,0 +1,37 @@
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+import os
+
+# Chemin du fichier
+nom_fichier = 'Results.csv'
+chemin_fichier = os.path.join(os.path.dirname(__file__), nom_fichier)
+
+# Chargement des données
+df = pd.read_csv(chemin_fichier)
+x_data = df.iloc[:, 0]  # Première colonne
+y_data = df.iloc[:, 1]  # Deuxième colonne
+
+# Optionnel : Normalisation des données entre 0 et 1
+y_normalise = (y_data - y_data.min()) / (y_data.max() - y_data.min())
+
+# Configuration du graphique
+plt.rcParams.update({"font.family": "serif", "font.size": 11})
+f, ax = plt.subplots(figsize=(8, 5))
+
+# Tracer les données
+ax.plot(x_data, y_normalise, color='black', linewidth=1)
+
+# Étiquettes des axes
+ax.set_xlabel(r'Étiquette X (unités)')
+ax.set_ylabel(r'Étiquette Y (unités)')
+
+# Ajustement des limites
+ax.set_ylim(0, 1.05)
+
+plt.tight_layout()
+plt.show()
+
+# Sauvegarde de la figure
+f.savefig("graphique.pdf", bbox_inches='tight')
+f.savefig("graphique.png", bbox_inches='tight', dpi=600)
