@@ -1,16 +1,38 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
+import numpy as np
 
 # ==========================================
 # CONFIGURATION - À MODIFIER
 # ==========================================
 nom_fichier_csv = 'Results.csv'
-nom_graphique_output = 'graphique_quelquonque' # Changez le nom ici sans l'extension
-# ==========================================
+nom_graphique_output = 'graphique_quelquonque'  # Changez le nom ici
+
+NA = 0.12  # Valeur pour fibre MONOMODE
+lambda_0 = 632.8e-9  # Longueur d'onde en mètres
+I_0 = 1.43e-3  # [mW]
+
+n_coeur = 2
+n_gaine = 1.5
+a = 4e-6  # rayon du coeur en mètres (ex: fibre monomode ~4 µm)
+w_1 = 1
+w_2 = 1
+
+# ==========================================#
+
+# 0. Calculs relatifs à l'approximation gaussienne
+V = (2 * np.pi * a / lambda_0) * NA  # Fréquence normalisée
+T = (2 * w_1 * w_2) / (w_1**2 + w_2**2)  # Efficacité d'injection
+
+print("----------------------------------------")
+print("V =", V)
+w_0 = a * (0.65 + 1.619 * V**(-1.5) + 2.879 * V**(-6))
+print("w0 =", w_0, "m")
+print("T =", T)
+print("----------------------------------------")
 
 # 1. Configuration des chemins
-# Récupère le dossier où se trouve ce script
 dossier_script = os.path.dirname(os.path.abspath(__file__))
 chemin_lecture = os.path.join(dossier_script, nom_fichier_csv)
 
@@ -23,30 +45,27 @@ except FileNotFoundError:
     exit()
 
 # Extraction des données par position (Colonnes 1 et 2)
-x_data = df.iloc[:, 0]
+x_data = df.iloc[:, 0]  # en cm
 y_data = df.iloc[:, 1]
 
-# 3. Normalisation des données entre 0 et 1
+# 3. Normalisation des données (intensité) entre 0 et 1
 y_normalise = (y_data - y_data.min()) / (y_data.max() - y_data.min())
 
 # 4. Configuration du graphique
 plt.rcParams.update({"font.family": "serif", "font.size": 11})
 f, ax = plt.subplots(figsize=(8, 5))
 
-# Tracer les données
-ax.plot(x_data, y_normalise, color='black', linewidth=1)
+# Tracer les données expérimentales
+ax.plot(x_data, y_normalise, color='black', linewidth=1, label='Données')
 
-# Étiquettes des axes (récupère les noms originaux du CSV)
-ax.set_xlabel("Axe x [unité]]")
-ax.set_ylabel("Axe y [unité]]")
-
-# Ajustement des limites de l'axe Y
+ax.set_xlabel("r [cm]")
+ax.set_ylabel("Intensité du champ normalisée [unité]")
 ax.set_ylim(0, 1.05)
+ax.legend()
 
 plt.tight_layout()
 
-# 5. Sauvegarde dans le même dossier que le script
-# On utilise la variable nom_graphique_output pour générer les fichiers
+# 5. Sauvegarde
 chemin_png = os.path.join(dossier_script, f"{nom_graphique_output}.png")
 chemin_pdf = os.path.join(dossier_script, f"{nom_graphique_output}.pdf")
 
@@ -55,6 +74,6 @@ f.savefig(chemin_pdf, bbox_inches='tight')
 
 print(f"Graphiques sauvegardés sous le nom : {nom_graphique_output}")
 print(f"Emplacement : {dossier_script}")
+print("----------------------------------------")
 
-# Affichage à l'écran
 plt.show()
