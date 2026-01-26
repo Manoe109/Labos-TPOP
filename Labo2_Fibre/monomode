@@ -1,0 +1,40 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+#paramètres laser
+intensite = 1.5e-3
+lambda_laser = 632.8e-9
+w0 = 0.63e-3 / 2
+theta = 1.3e-3 / 2
+f=4.5e-3
+Vc=2.405
+
+#z
+z = np.linspace(-1e-3, 1e-3, 2000)
+
+#parametres monomode
+lambda_c = 620e-9
+NA = 0.12
+
+#functions
+a = Vc * lambda_c / (2 * np.pi * NA)
+V = 2 * np.pi * a * NA / lambda_laser
+w_fibre = a * (0.65 + 1.619 / V**1.5 + 2.879 / V**6)
+w_obj = w0 * np.sqrt(1 + (z * theta/ w0)**2)
+w_image = lambda_laser * f / (np.pi * w_obj)
+T = (2 * w_image * w0 / (w_image**2 + w0**2))**2
+
+#print
+print('a=',a)
+print('V=',V)
+print('w_fibre=',w_fibre)
+
+
+#plot
+plt.figure()
+plt.plot(z*1e3, T)
+plt.xlabel("Distance Z (mm)")
+plt.ylabel("Efficacité de couplage T")
+plt.title("Couplage en fonction de la distance")
+plt.show()

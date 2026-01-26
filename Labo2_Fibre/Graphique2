@@ -1,0 +1,25 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Chemin du fichier CSV
+fichier_csv = r"C:\Users\alext\OneDrive\Bureau\Génie physique\Calculs python\TPOP\Values.csv"
+
+# Lecture du fichier CSV
+# On suppose que le fichier a un en-tête et que les colonnes sont séparées par des virgules
+data = np.genfromtxt(fichier_csv, delimiter=",", names=True)
+
+# Extraction des colonnes (remplace 'X' et 'Y' par le nom réel de tes colonnes dans le CSV)
+x = data['Distance']  # par exemple : 'Z' si c'est la colonne de distance
+y = data['Value']  # par exemple : 'T' si c'est la colonne d'efficacité
+
+# Création du graphique
+plt.figure()
+plt.plot(x, y, linestyle='-', color='b')
+plt.xlabel("x")
+plt.ylabel("y")
+plt.title("Graphique à partir du fichier CSV")
+plt.grid(True)
+plt.show()
