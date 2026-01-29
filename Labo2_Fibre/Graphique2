@@ -1,25 +1,61 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
 
-import numpy as np
-import matplotlib.pyplot as plt
 
-# Chemin du fichier CSV
-fichier_csv = r"C:\Users\alext\OneDrive\Bureau\Génie physique\Calculs python\TPOP\Values.csv"
+#path csv Alex
+fichier_csv = r"C:\Users\alext\OneDrive\Bureau\Génie physique\Calculs python\Labos-TPOP\Labo2_Fibre\Values.1mode.csv"
 
-# Lecture du fichier CSV
-# On suppose que le fichier a un en-tête et que les colonnes sont séparées par des virgules
+#path csv Mathilde
+#fichier_csv = r"C:\Users\alext\OneDrive\Bureau\Génie physique\Calculs python\Labos-TPOP\Labo2_Fibre\Values.1mode.csv"
+
+
+#csv data
 data = np.genfromtxt(fichier_csv, delimiter=",", names=True)
 
-# Extraction des colonnes (remplace 'X' et 'Y' par le nom réel de tes colonnes dans le CSV)
-x = data['Distance']  # par exemple : 'Z' si c'est la colonne de distance
-y = data['Value']  # par exemple : 'T' si c'est la colonne d'efficacité
+#extraire els données + normaliser
+x = data['Distance']  
+y = data['Intensite']  
+y_norm = y / np.max(y)
 
-# Création du graphique
+
+#curve fit
+def gaussian(x, amplitude, mean, std_dev, b):
+    return amplitude * np.exp(-((x - mean) ** 2) / (2 * std_dev ** 2)) + b
+
+xx = np.linspace(0, 3700, 100)
+amplitude, mean, std_dev, baseline = 1, 1780, 500, 0.4
+y_gaussien = gaussian(xx, amplitude, mean, std_dev, baseline)
+
+# guess basées sur les données expérimentales
+initial_guesses = [max(y_norm) - min(y_norm), x[np.argmax(y_norm)], np.std(x), min(y_norm)]
+
+# fit sur les données expérimentales
+popt, pcov = curve_fit(gaussian, x, y_norm, p0=initial_guesses)
+fitted_amplitude, fitted_mean, fitted_std_dev, fitted_b = popt
+
+#futted curve
+xx = np.linspace(min(x), max(x), 500)
+y_fit = gaussian(xx, *popt)
+print(f"Fitted Parameters:   Amplitude={fitted_amplitude:.2f}, Mean={fitted_mean:.2f}, Std Dev={fitted_std_dev:.2f}, Baseline={fitted_b:.2f}")
+
+
+#incertitudes
+residuals = y_norm - gaussian(x, *popt)
+sigma_y = np.std(residuals)
+chi2 = np.sum((residuals / sigma_y) ** 2)
+ndof = len(y) - len(popt)
+chi2_reduced = chi2 / ndof
+print(f"Chi-squared: {chi2:.2f}, Reduced Chi-squared: {chi2_reduced:.8f}")
+
+#grohique
 plt.figure()
-plt.plot(x, y, linestyle='-', color='b')
-plt.xlabel("x")
-plt.ylabel("y")
+plt.plot(x, y_norm, linestyle='-', linewidth=1, label='Données expérimentales', color="#898D8D")
+plt.plot(xx, y_fit, linestyle='--', linewidth=2, label='Approximation gaussienne', color="#343030")
+plt.xlabel("x", fontsize=10)
+plt.ylabel("Intensité normalisée", fontsize=10)
+plt.xticks(fontsize=10)
+plt.yticks(fontsize=10)
+plt.legend(fontsize=10)
 plt.title("Graphique à partir du fichier CSV")
-plt.grid(True)
 plt.show()
