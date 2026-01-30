@@ -19,22 +19,22 @@ NA = 0.12
 
 #functions
 a = Vc * lambda_c / (2 * np.pi * NA)
+d = 2*a
 V = 2 * np.pi * a * NA / lambda_laser
 w_fibre = a * (0.65 + 1.619 / V**1.5 + 2.879 / V**6)
 w_obj = w0 * np.sqrt(1 + (z * theta/ w0)**2)
 w_image = lambda_laser * f / (np.pi * w_obj)
 T = (2 * w_image * w0 / (w_image**2 + w0**2))**2
 
-#print
-print('a=',a)
-print('V=',V)
-print('w_fibre=',w_fibre)
+if __name__ == "__main__":
 
+    print("a =", a)
+    print("V =", V)
+    print("w_fibre =", w_fibre)
 
-#plot
-plt.figure()
-plt.plot(z*1e3, T)
-plt.xlabel("Distance Z (mm)")
-plt.ylabel("Efficacité de couplage T")
-plt.title("Couplage en fonction de la distance")
-plt.show()
+    plt.figure()
+    plt.plot(z * 1e3, T)
+    plt.xlabel("Distance Z (mm)")
+    plt.ylabel("Efficacité de couplage T")
+    plt.title("Couplage en fonction de la distance")
+    plt.show()
