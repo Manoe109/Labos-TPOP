@@ -70,15 +70,19 @@ print(f"Chi-squared: {chi2:.2f}, Reduced Chi-squared: {chi2_reduced:.8f}")
 
 #grohique
 plt.figure()
+
 #cent
 #plt.plot(x_cent, y_norm, linestyle='-', linewidth=1, label='Données expérimentales', color="#898D8D")
 #plt.plot(xx_cent, y_fit_cent, linestyle='--', linewidth=2, label='Approximation gaussienne', color="#343030")
+
 #not cent
 #plt.plot(x, y_norm, linestyle='-', linewidth=1, label='Données expérimentales', color="#898D8D")
 #plt.plot(xx, y_fit, linestyle='--', linewidth=2, label='Approx gaussienne', color="#343030")
+
 #theta_cent
 plt.plot(x_theta, y_norm, linestyle='-', linewidth=1, label='Données expérimentales', color="#898D8D")
 plt.plot(xx_theta, y_fit_theta, linestyle='--', linewidth=2, label='Approx gaussienne', color="#343030")
+
 #axes
 plt.xlabel("Angle (degrés)", fontsize=12)
 plt.ylabel("Intensité normalisée", fontsize=12)
