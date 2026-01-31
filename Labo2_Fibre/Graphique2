@@ -6,11 +6,11 @@ import os
 
 
 #path csv Alex
-fichier_csv = r"C:\Users\alext\OneDrive\Bureau\Génie physique\Calculs python\Labos-TPOP\Labo2_Fibre\Values.1mode.csv"
+#fichier_csv = r"C:\Users\alext\OneDrive\Bureau\Génie physique\Calculs python\Labos-TPOP\Labo2_Fibre\Values.1mode.csv"
 
 #path csv Mathilde
-#dossier_script = os.path.dirname(os.path.abspath(__file__))
-#fichier_csv = os.path.join(dossier_script, "Values.1mode.csv")
+dossier_script = os.path.dirname(os.path.abspath(__file__))
+fichier_csv = os.path.join(dossier_script, "Values.1mode.csv")
 
 #csv data
 data = np.genfromtxt(fichier_csv, delimiter=",", names=True)
@@ -69,7 +69,7 @@ chi2_reduced = chi2 / ndof
 print(f"Chi-squared: {chi2:.2f}, Reduced Chi-squared: {chi2_reduced:.8f}")
 
 #grohique
-plt.figure()
+f=plt.figure()
 
 #cent
 #plt.plot(x_cent, y_norm, linestyle='-', linewidth=1, label='Données expérimentales', color="#898D8D")
@@ -79,14 +79,23 @@ plt.figure()
 #plt.plot(x, y_norm, linestyle='-', linewidth=1, label='Données expérimentales', color="#898D8D")
 #plt.plot(xx, y_fit, linestyle='--', linewidth=2, label='Approx gaussienne', color="#343030")
 
+plt.rcParams.update({"font.family": "serif", "font.size": 11})
+f, ax = plt.subplots(figsize=(8, 5))
+
 #theta_cent
 plt.plot(x_theta, y_norm, linestyle='-', linewidth=1, label='Données expérimentales', color="#898D8D")
 plt.plot(xx_theta, y_fit_theta, linestyle='--', linewidth=1.7, label='Approximation gaussienne', color="#181515")
 
+Taille_police = 14
 #axes
-plt.xlabel("Angle (degrés)", fontsize=12)
-plt.ylabel("Intensité normalisée", fontsize=12)
-plt.xticks(fontsize=12)
-plt.yticks(fontsize=12)
-plt.legend(fontsize=12)
+plt.xlabel("Angle (°)", fontsize=Taille_police)
+plt.ylabel("Intensité normalisée", fontsize=Taille_police)
+plt.xticks(fontsize=Taille_police)
+plt.yticks(fontsize=Taille_police)
+plt.legend(loc='upper right', fontsize=12)
+plt.tight_layout()
+
+f.savefig("graph_2.pdf", bbox_inches='tight')
+f.savefig("graph_2.png", bbox_inches='tight', dpi=600)
+
 plt.show()
