@@ -1,0 +1,40 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+#import os
+
+# path Excel
+fichier_xlsx = r"C:\Users\alext\OneDrive\Bureau\Génie physique\Calculs python\Labos-TPOP\Labo3_polarisation\polarisation.xlsx"
+
+# lecture Excel
+pol = pd.read_excel(fichier_xlsx, sheet_name=0)
+# extraire les données
+x = pol["angle"].to_numpy()
+y1 = pol["intensité_te"].to_numpy()
+y2 = pol["intensité_tm"].to_numpy()
+
+exp_D = pd.read_excel(fichier_xlsx, sheet_name=1)
+xd = exp_D["angle"].to_numpy()
+yd = exp_D["intensité"].to_numpy()
+
+exp_e = pd.read_excel(fichier_xlsx, sheet_name=2)
+xe = exp_e["angle"].to_numpy()
+ye1 = exp_e["intensité 22.5"].to_numpy()
+ye2 = exp_e["intensité 44.5"].to_numpy()
+
+
+
+
+
+# graphique
+plt.figure()
+
+plt.plot(x, y1, linestyle='-', linewidth=1, label='Données expérimentales TE', color="#898D8D")
+
+
+plt.xlabel("Angle (°)", fontsize=20)
+plt.ylabel("Intensité normalisée", fontsize=20)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+plt.legend(fontsize=16)
+plt.show()
