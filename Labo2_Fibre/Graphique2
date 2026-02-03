@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
-from monomode import a, lambda_laser
+from monomode import a, NA, lambda_laser
 import os
 
 
@@ -17,6 +17,7 @@ data = np.genfromtxt(fichier_csv, delimiter=",", names=True)
 
 #extraire els données + normaliser
 theta_diffraction = np.degrees(np.arcsin(1.220 * lambda_laser / (2*a)))
+V = (2 * np.pi * a / lambda_laser) * NA
 x = data['Distance']  
 y = data['Intensite']  
 y_norm = (y / np.max(y))
@@ -57,16 +58,16 @@ popt_theta, pcov_theta = curve_fit(gaussian, x_theta, y_norm, p0=initial_guesses
 fitted_amplitude_theta , fitted_mean_theta, fitted_std_dev_theta, fitted_b_theta = popt_theta
 #fitted curve x_cent
 y_fit_theta = gaussian(xx_theta , *popt_theta)
-print(f"Fitted Parameters:   Amplitude={fitted_amplitude_theta:.2f}, Mean={fitted_mean_theta:.2f}, Std Dev={fitted_std_dev_theta:.2f}, Baseline={fitted_b_theta:.2f}")
+print(f"Fitted Parameters:   Amplitude={fitted_amplitude_theta:.6f}, Mean={fitted_mean_theta:.6f}, Std Dev={fitted_std_dev_theta:.6f}, Baseline={fitted_b_theta:.6f}")
+print(f'V = {V:.6f}')
 
-
-#incertitudes
-residuals = y_norm - gaussian(x, *popt)
-sigma_y = np.std(residuals)
-chi2 = np.sum((residuals / sigma_y) ** 2)
-ndof = len(y) - len(popt)
-chi2_reduced = chi2 / ndof
-print(f"Chi-squared: {chi2:.2f}, Reduced Chi-squared: {chi2_reduced:.8f}")
+#r carré
+y_pred = gaussian(x_theta, *popt_theta)
+residuals = y_norm - y_pred
+ss_res = np.sum(residuals**2)
+ss_tot = np.sum((y_norm - np.mean(y_norm))**2)
+r2 = 1 - ss_res / ss_tot
+print(f"R2 = {r2:.6f}")
 
 #grohique
 plt.figure()
@@ -84,9 +85,9 @@ plt.plot(x_theta, y_norm, linestyle='-', linewidth=1, label='Données expérimen
 plt.plot(xx_theta, y_fit_theta, linestyle='--', linewidth=1.7, label='Approximation gaussienne', color="#181515")
 
 #axes
-plt.xlabel("Angle (degrés)", fontsize=12)
-plt.ylabel("Intensité normalisée", fontsize=12)
-plt.xticks(fontsize=12)
-plt.yticks(fontsize=12)
-plt.legend(fontsize=12)
+plt.xlabel("Angle ($\degree$)", fontsize=20)
+plt.ylabel("Intensité normalisée", fontsize=20)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+plt.legend(fontsize=16)
 plt.show()
