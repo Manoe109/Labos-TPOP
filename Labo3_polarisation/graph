@@ -3,33 +3,35 @@ import matplotlib.pyplot as plt
 import pandas as pd
 #import os
 
-# path Excel
+# path Excel Alex
 fichier_xlsx = r"C:\Users\alext\OneDrive\Bureau\Génie physique\Calculs python\Labos-TPOP\Labo3_polarisation\polarisation.xlsx"
 
-# lecture Excel
+# path xlsx Mathilde
+#dossier_script = os.path.dirname(os.path.abspath(__file__))
+#fichier_xlsx = os.path.join(dossier_script, "Values.1mode.xlsx")
+
+# lecture Excel polarisation
 pol = pd.read_excel(fichier_xlsx, sheet_name=0)
-# extraire les données
 x = pol["angle"].to_numpy()
 y1 = pol["intensité_te"].to_numpy()
 y2 = pol["intensité_tm"].to_numpy()
 
+#expérience d
 exp_D = pd.read_excel(fichier_xlsx, sheet_name=1)
 xd = exp_D["angle"].to_numpy()
 yd = exp_D["intensité"].to_numpy()
 
+#expérience e
 exp_e = pd.read_excel(fichier_xlsx, sheet_name=2)
 xe = exp_e["angle"].to_numpy()
 ye1 = exp_e["intensité 22.5"].to_numpy()
 ye2 = exp_e["intensité 44.5"].to_numpy()
 
 
-
-
-
 # graphique
 plt.figure()
 
-plt.plot(x, y1, linestyle='-', linewidth=1, label='Données expérimentales TE', color="#898D8D")
+plt.plot(x, y1, linestyle='-', linewidth=1, label='', color="#898D8D")
 
 
 plt.xlabel("Angle (°)", fontsize=20)
