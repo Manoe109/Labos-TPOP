@@ -32,12 +32,42 @@ ye2 = exp_e["intensité 44.5"].to_numpy()
 plt.figure()
 
 #deuxième ligne à commenter au besoin, changer les valeurs à tracer
-plt.plot(x, y1, linestyle='-', linewidth=1, label='Intensité TE', color="#898D8D")
-plt.plot(x, y2, linestyle='-', linewidth=1, label='Intensité TM', color="black")
+plt.plot(x, y1, linestyle='-', linewidth=1, label='polarisation TE', color="#898D8D")
+plt.plot(x, y2, linestyle='-', linewidth=1, label='polarisation TM', color="black")
 
 plt.xlabel("Angle (°)", fontsize=20)
-plt.ylabel("Intensité normalisée", fontsize=20)
+plt.ylabel("Intensité", fontsize=20)
 plt.xticks(fontsize=18)
 plt.yticks(fontsize=18)
 plt.legend(fontsize=16)
+plt.title("A. Intensité en fonction de l'angle d'incidence pour les polarisation TE et TM", fontsize=22)
 plt.show()
+
+#Deuxieme figure
+
+plt.figure()
+plt.plot(xd, yd, linestyle='-', linewidth=1, label='Intensité transmise entre 2 polariseurs', color="#898D8D")
+
+plt.xlabel("Angle (°)", fontsize=20)
+plt.ylabel("Intensité", fontsize=20)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+plt.legend(fontsize=16)
+plt.title("D. Intensité transmise entre 2 polariseurs en fonction de l'angle", fontsize=22)
+plt.show()
+
+#Troisieme figure
+
+f = plt.figure()
+plt.plot(xe, ye1, linestyle='-', linewidth=1, label='Intensité 22,5°', color="#898D8D")
+plt.plot(xe, ye2, linestyle='-', linewidth=1, label='Intensité 45°', color="black")
+
+plt.xlabel("Angle (°)", fontsize=20)
+plt.ylabel("Intensité", fontsize=20)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+plt.legend(fontsize=16)
+#plt.title("E. Intensité transmise pour une lame quart d'onde à 22,5° et 45°", fontsize=22)
+plt.show()
+f.savefig("graph_1.pdf", bbox_inches='tight')
+f.savefig("graph_1.png", bbox_inches='tight', dpi=600)
