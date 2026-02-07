@@ -6,11 +6,11 @@ import os
 
 
 #path csv Alex
-fichier_csv = r"C:\Users\alext\OneDrive\Bureau\Génie physique\Calculs python\Labos-TPOP\Labo2_Fibre\Values.1mode.csv"
+#fichier_csv = r"C:\Users\alext\OneDrive\Bureau\Génie physique\Calculs python\Labos-TPOP\Labo2_Fibre\Values.1mode.csv"
 
 #path csv Mathilde
-#dossier_script = os.path.dirname(os.path.abspath(__file__))
-#fichier_csv = os.path.join(dossier_script, "Values.1mode.csv")
+dossier_script = os.path.dirname(os.path.abspath(__file__))
+fichier_csv = os.path.join(dossier_script, "Values.1mode.csv")
 
 #csv data
 data = np.genfromtxt(fichier_csv, delimiter=",", names=True)
