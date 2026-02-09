@@ -1,0 +1,34 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import os
+
+dossier_script = os.path.dirname(os.path.abspath(__file__))
+fichier_csv = os.path.join(dossier_script, "Values.1mode.csv")
+
+
+#exporter les données
+exp = pd.read_excel(fichier_csv, sheet_name=0)
+temp = exp["temps"].to_numpy()
+signal = exp["voltage"].to_numpy()
+ 
+
+seuil = 2.5 #exemple, à ajuster
+indices_haut = np.where(signal > seuil)[0]
+indices_bas = np.where(signal <= seuil)[0]
+
+signal_haut = signal[indices_haut]
+bruit_fond = signal[indices_bas]
+
+# Calcul des statistiques
+mu_haut = np.mean(signal_haut)
+sigma_haut = np.std(signal_haut)
+mu_bas = np.mean(bruit_fond)
+sigma_bas = np.std(bruit_fond)
+
+SNR = mu_haut / sigma_haut
+
+print(f"Signal haut - Moyenne: {mu_haut:.4f}, Écart-type: {sigma_haut:.4f}")
+print(f"Bruit fond - Moyenne: {mu_bas:.4f}, Écart-type: {sigma_bas:.4f}")
+print(f"SNR: {SNR:.4f}")
+print(f"Augmentation du signal: {mu_haut - mu_bas:.4f}")

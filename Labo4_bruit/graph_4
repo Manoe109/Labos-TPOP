@@ -9,14 +9,14 @@ fichier_csv = os.path.join(dossier_script, "Values.1mode.xlsx")
 
 #exporter les données
 exp = pd.read_excel(fichier_csv, sheet_name=0)
-xd = exp["angle"].to_numpy()
-yd = exp["intensité"].to_numpy()
+x = exp["temps"].to_numpy()
+y = exp["voltage"].to_numpy()
 
 
 # graphique
 plt.figure()
 
-plt.plot(x, y1, linestyle='-', linewidth=1, label='', color="#898D8D")
+plt.plot(x, y, linestyle='-', linewidth=1, label='', color="#898D8D")
 
 
 plt.xlabel("Angle (°)", fontsize=20)
