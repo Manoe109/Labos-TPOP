@@ -1,0 +1,63 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Charger les données depuis le fichier CSV
+donnees = np.loadtxt('donnees.csv', delimiter=',', skiprows=1)
+
+# Si vous avez déjà séparé votre signal haut:
+signal_haut = donnees  # Remplacez par vos données filtrées
+
+# ===============================================
+# QUESTION 4a: Tirer 2 points aléatoirement
+# ===============================================
+
+N_repetitions = 10000  # Nombre de fois qu'on répète le processus
+moyennes = []
+
+for i in range(N_repetitions):
+    # Choisir 2 valeurs au hasard
+    echantillon = np.random.choice(signal_haut, size=2, replace=True)
+    # Calculer la moyenne
+    moyenne = np.mean(echantillon)
+    moyennes.append(moyenne)
+
+moyennes = np.array(moyennes)
+
+# Caractériser la distribution
+print(f"Moyenne des moyennes: {np.mean(moyennes):.6f}")
+print(f"Écart-type (SEM exp): {np.std(moyennes):.6f}")
+print(f"SEM théorique: {np.std(signal_haut) / np.sqrt(2):.6f}")
+
+# Visualiser
+plt.hist(moyennes, bins=50, edgecolor='black')
+plt.xlabel('Valeur de la moyenne')
+plt.ylabel('Fréquence')
+plt.title('Distribution des moyennes (N=2)')
+plt.show()
+
+
+# ===============================================
+# QUESTION 4c: Varier le nombre de points N
+# ===============================================
+
+N_valeurs = [2, 5, 10, 20, 50, 100, 200]
+sem_experimental = []
+
+for N in N_valeurs:
+    moyennes_N = []
+    
+    for i in range(1000):
+        echantillon = np.random.choice(signal_haut, size=N, replace=True)
+        moyennes_N.append(np.mean(echantillon))
+    
+    sem = np.std(moyennes_N)
+    sem_experimental.append(sem)
+    print(f"N={N:3d} | SEM exp: {sem:.6f}")
+
+# Tracer SEM vs N
+plt.plot(N_valeurs, sem_experimental, 'o-', markersize=8)
+plt.xlabel('Nombre de points N')
+plt.ylabel('SEM')
+plt.title('Erreur standard vs N')
+plt.grid(True)
+plt.show()
