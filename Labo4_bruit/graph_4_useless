@@ -1,0 +1,189 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+
+dossier_script = os.path.dirname(os.path.abspath(__file__))
+fichier_csv = os.path.join(dossier_script, "test4.csv")
+
+# Charger les données (adapter selon votre fichier)
+# Si vous avez un fichier Moku:Go avec commentaires:
+data = np.loadtxt(fichier_csv, delimiter=',', skiprows=9)
+
+temps = data[:, 0]
+signal = data[:, 1]
+
+print(f"Nombre total de points: {len(signal)}")
+print(f"Durée totale: {temps[-1]:.3f} s")
+
+# ===============================================
+# MÉTHODE 2: Sans signal de sync - détection automatique
+# ===============================================
+
+# Calculer un seuil basé sur la médiane ou moyenne
+seuil = np.median(signal)
+# Ou utilisez la moyenne: seuil = np.mean(signal)
+
+# Identifier les zones où signal > seuil (signal haut)
+indices_haut = np.where(signal > seuil)[0]
+indices_bas = np.where(signal <= seuil)[0]
+
+# Extraire les données
+signal_haut = signal[indices_haut]
+signal_bas = signal[indices_bas]
+temps_haut = temps[indices_haut]
+temps_bas = temps[indices_bas]
+
+print(f"\n=== Séparation du signal ===")
+print(f"Points signal haut: {len(signal_haut)}")
+print(f"Points bruit de fond (signal bas): {len(signal_bas)}")
+
+# ===============================================
+# CARACTÉRISATION DES DISTRIBUTIONS
+# ===============================================
+mu_haut = np.mean(signal_haut)
+sigma_haut = np.std(signal_haut)
+
+mu_bas = np.mean(signal_bas)
+sigma_bas = np.std(signal_bas)
+
+print(f"\n=== Signal Haut ===")
+print(f"Moyenne: {mu_haut:.6f} V")
+print(f"Écart-type: {sigma_haut:.6f} V")
+
+print(f"\n=== Bruit de fond (Signal Bas) ===")
+print(f"Moyenne: {mu_bas:.6f} V")
+print(f"Écart-type: {sigma_bas:.6f} V")
+
+# ===============================================
+# CALCUL DU SNR
+# ===============================================
+# SNR = μ / σ pour le signal haut
+snr_haut = mu_haut / sigma_haut
+
+# SNR relatif = différence des moyennes / bruit
+augmentation = mu_haut - mu_bas
+snr_relatif = augmentation / sigma_bas
+
+print(f"\n=== SNR ===")
+print(f"SNR signal haut: {snr_haut:.2f}")
+print(f"Augmentation du signal: {augmentation:.6f} V")
+print(f"SNR relatif (augmentation/bruit): {snr_relatif:.2f}")
+
+# ===============================================
+# CALCUL DU SIGNAL CORRIGÉ
+# ===============================================
+# Soustraire la moyenne du bruit de fond
+signal_corrige = signal - mu_bas
+signal_corrige[signal_corrige < 0] = 0  # Supprimer les valeurs négatives
+
+# Seuil pour détecter le signal haut sur le signal corrigé
+seuil_signal = np.std(signal_corrige) * 2  # Ajustez ce facteur (1.5 à 3)
+
+# ===============================================
+# GRAPHIQUE 1: Signal temporel complet
+# ===============================================
+plt.figure(figsize=(14, 6))
+plt.plot(temps, signal, 'k-', linewidth=0.5, alpha=0.7, label='Signal complet')
+plt.axhline(seuil, color='r', linestyle='--', linewidth=2, label=f'Seuil = {seuil:.3f} V')
+plt.axhline(mu_haut, color='b', linestyle='--', linewidth=2, alpha=0.7, label=f'Moyenne haut = {mu_haut:.3f} V')
+plt.axhline(mu_bas, color='g', linestyle='--', linewidth=2, alpha=0.7, label=f'Moyenne bas = {mu_bas:.3f} V')
+plt.xlabel('Temps (s)', fontsize=14)
+plt.ylabel('Voltage (V)', fontsize=14)
+plt.title('Signal temporel complet', fontsize=16, fontweight='bold')
+plt.legend(fontsize=12)
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# ===============================================
+# GRAPHIQUE 2: Zoom sur une portion
+# ===============================================
+plt.figure(figsize=(14, 6))
+# Prendre les 1000 premiers points pour le zoom
+n_zoom = min(1000, len(temps))
+plt.plot(temps[:n_zoom], signal[:n_zoom], 'k-', linewidth=1, label='Signal')
+plt.scatter(temps_haut[:n_zoom], signal_haut[:n_zoom], c='blue', s=10, alpha=0.6, label='Signal haut')
+plt.scatter(temps_bas[:n_zoom], signal_bas[:n_zoom], c='green', s=10, alpha=0.6, label='Bruit de fond')
+plt.axhline(seuil, color='r', linestyle='--', linewidth=2, alpha=0.7, label=f'Seuil = {seuil:.3f} V')
+plt.xlabel('Temps (s)', fontsize=14)
+plt.ylabel('Voltage (V)', fontsize=14)
+plt.title('Zoom: Séparation signal haut / bas', fontsize=16, fontweight='bold')
+plt.legend(fontsize=12)
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# ===============================================
+# GRAPHIQUE 3: Signal corrigé
+# ===============================================
+plt.figure(figsize=(14, 6))
+plt.plot(temps, signal_corrige, 'g-', linewidth=1, label='Signal corrigé (- bruit de fond)')
+plt.axhline(seuil_signal, color='purple', linestyle='--', linewidth=2, 
+            label=f'Seuil de détection: {seuil_signal:.3f} V')
+
+# Zone de signal haut
+plt.fill_between(temps, 0, signal_corrige, where=(signal_corrige > seuil_signal), 
+                 alpha=0.4, color='orange', label='Signal haut (au-dessus du seuil)')
+
+plt.xlabel('Temps (s)', fontsize=14)
+plt.ylabel('Voltage (V)', fontsize=14)
+plt.title('Signal corrigé (bruit de fond soustrait)', fontsize=16, fontweight='bold')
+plt.legend(loc='best', fontsize=11)
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# ===============================================
+# GRAPHIQUE 4: Histogramme signal haut
+# ===============================================
+plt.figure(figsize=(10, 6))
+plt.hist(signal_haut, bins=50, color='blue', alpha=0.7, edgecolor='black', density=True, label='Signal haut')
+plt.axvline(mu_haut, color='darkblue', linestyle='--', linewidth=2, label=f'μ = {mu_haut:.3f} V')
+plt.axvline(mu_haut - sigma_haut, color='darkblue', linestyle=':', linewidth=2, alpha=0.7, label=f'μ ± σ')
+plt.axvline(mu_haut + sigma_haut, color='darkblue', linestyle=':', linewidth=2, alpha=0.7)
+plt.xlabel('Voltage (V)', fontsize=14)
+plt.ylabel('Densité de probabilité', fontsize=14)
+plt.title(f'Distribution Signal Haut (SNR = {snr_haut:.2f})', fontsize=16, fontweight='bold')
+plt.legend(fontsize=12)
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# ===============================================
+# GRAPHIQUE 5: Histogramme bruit de fond
+# ===============================================
+plt.figure(figsize=(10, 6))
+plt.hist(signal_bas, bins=50, color='green', alpha=0.7, edgecolor='black', density=True, label='Bruit de fond')
+plt.axvline(mu_bas, color='darkgreen', linestyle='--', linewidth=2, label=f'μ = {mu_bas:.3f} V')
+plt.axvline(mu_bas - sigma_bas, color='darkgreen', linestyle=':', linewidth=2, alpha=0.7, label=f'μ ± σ')
+plt.axvline(mu_bas + sigma_bas, color='darkgreen', linestyle=':', linewidth=2, alpha=0.7)
+plt.xlabel('Voltage (V)', fontsize=14)
+plt.ylabel('Densité de probabilité', fontsize=14)
+plt.title('Distribution Bruit de fond', fontsize=16, fontweight='bold')
+plt.legend(fontsize=12)
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# ===============================================
+# GRAPHIQUE 6: Comparaison des distributions
+# ===============================================
+plt.figure(figsize=(12, 6))
+
+# Superposer les deux distributions
+plt.hist(signal_bas, bins=50, color='green', alpha=0.5, edgecolor='black', 
+         density=True, label=f'Bruit de fond (μ={mu_bas:.3f}, σ={sigma_bas:.4f})')
+plt.hist(signal_haut, bins=50, color='blue', alpha=0.5, edgecolor='black', 
+         density=True, label=f'Signal haut (μ={mu_haut:.3f}, σ={sigma_haut:.4f})')
+
+plt.axvline(mu_bas, color='darkgreen', linestyle='--', linewidth=2, label='Moyenne bruit')
+plt.axvline(mu_haut, color='darkblue', linestyle='--', linewidth=2, label='Moyenne signal')
+
+plt.xlabel('Voltage (V)', fontsize=16)
+plt.ylabel('Densité de probabilité', fontsize=16)
+plt.title(f'Comparaison des distributions - Augmentation: {augmentation:.4f} V (SNR relatif: {snr_relatif:.2f})', 
+          fontsize=14, fontweight='bold')
+plt.legend(fontsize=12)
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()

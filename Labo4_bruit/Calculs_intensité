@@ -1,0 +1,77 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+
+# ======================================================
+# 1. Trouver automatiquement test4.csv
+# ======================================================
+
+dossier_script = os.path.dirname(os.path.abspath(__file__))
+fichier_csv = os.path.join(dossier_script, "test4.csv")
+
+# ======================================================
+# 2. Charger le fichier (ignore les lignes %)
+# ======================================================
+
+data = np.loadtxt(fichier_csv, delimiter=',', comments='%')
+
+temps = data[:, 0]
+signal = data[:, 1]
+
+# ======================================================
+# 3. Séparer automatiquement signal haut / bruit
+# ======================================================
+
+seuil = np.median(signal)
+
+signal_haut = signal[signal > seuil]
+bruit = signal[signal <= seuil]
+
+# ======================================================
+# 4. (2a) Calcul du SNR
+# ======================================================
+
+mu_signal = np.mean(signal_haut)
+mu_bruit = np.mean(bruit)
+
+sigma_bruit = np.std(bruit, ddof=1)
+
+SNR = (mu_signal - mu_bruit) / sigma_bruit
+
+print("===== 2a) SNR =====")
+print(f"SNR = {SNR:.3f}")
+
+# ======================================================
+# 5. (2b) Distribution statistique
+# ======================================================
+
+sigma_signal = np.std(signal_haut, ddof=1)
+
+print("\n===== 2b) Statistiques =====")
+print(f"Signal haut : moyenne = {mu_signal:.6f} V, std = {sigma_signal:.6f} V")
+print(f"Bruit fond  : moyenne = {mu_bruit:.6f} V, std = {sigma_bruit:.6f} V")
+
+# Histogrammes
+plt.figure()
+plt.hist(bruit, bins=60, alpha=0.6, label="Bruit")
+plt.hist(signal_haut, bins=60, alpha=0.6, label="Signal haut")
+plt.xlabel("Tension (V)")
+plt.ylabel("Nombre de points")
+plt.legend()
+plt.title("Distribution des données")
+plt.show()
+
+# ======================================================
+# 6. Ratio bruit vs intensité maximale
+# ======================================================
+
+# Intensité du signal (on enlève le fond DC)
+intensite_signal = mu_signal - mu_bruit
+
+# Ratio bruit / intensité
+ratio = sigma_bruit / intensite_signal
+
+print("\n===== Ratio bruit / intensité =====")
+print(f"Intensité du signal = {intensite_signal:.6f} V")
+print(f"Sigma bruit = {sigma_bruit:.6f} V")
+print(f"Ratio bruit/intensité = {ratio:.6e}")

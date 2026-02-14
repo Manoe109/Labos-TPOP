@@ -1,0 +1,168 @@
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Chemin vers le fichier
+dossier_script = os.path.dirname(os.path.abspath(__file__))
+fichier_csv = os.path.join(dossier_script, "test2.csv")
+
+# Importer les données (sauter les lignes de commentaire % et l'en-tête)
+data = np.loadtxt(fichier_csv, delimiter=',', skiprows=9)
+temps = data[:, 0]
+signal_mesure = data[:, 1]
+
+print(f"Nombre total de points: {len(signal_mesure)}")
+print(f"Durée: {temps[-1]:.3f} s")
+
+# ===============================================
+# MÉTHODE 1: Bruit de fond = valeur CONSTANTE (moyenne des valeurs basses)
+# ===============================================
+
+# Estimation du bruit de fond constant
+# On prend les valeurs les plus basses (par exemple, les 20% les plus bas)
+percentile_bas = 30  # Ajustez selon votre signal (20-40% typiquement)
+seuil_initial = np.percentile(signal_mesure, percentile_bas)
+
+# Les points sous ce seuil sont considérés comme du bruit de fond
+indices_bruit_initial = signal_mesure < seuil_initial
+bruit_fond_constant = np.mean(signal_mesure[indices_bruit_initial])
+
+print(f"\n=== Estimation bruit de fond ===")
+print(f"Bruit de fond constant estimé: {bruit_fond_constant:.6f} V")
+
+# Signal corrigé = signal mesuré - bruit de fond constant
+signal_corrige = signal_mesure - bruit_fond_constant
+signal_corrige[signal_corrige < 0] = 0  # Supprimer les valeurs négatives
+
+# ===============================================
+# SÉPARATION SIGNAL HAUT / BRUIT DE FOND
+# ===============================================
+
+# Seuil pour détecter les pics (signal haut)
+# On utilise un seuil basé sur l'écart-type du signal corrigé
+seuil_signal = np.std(signal_corrige) * 2  # Ajustez le facteur (1.5 à 3)
+
+# Indices des zones signal haut vs bruit de fond
+indices_haut = np.where(signal_corrige > seuil_signal)[0]
+indices_bas = np.where(signal_corrige <= seuil_signal)[0]
+
+# Extraction des données ORIGINALES (non corrigées)
+signal_haut = signal_mesure[indices_haut]
+bruit_fond = signal_mesure[indices_bas]
+
+# ===============================================
+# STATISTIQUES
+# ===============================================
+
+mu_haut = np.mean(signal_haut)
+sigma_haut = np.std(signal_haut)
+mu_bas = np.mean(bruit_fond)
+sigma_bas = np.std(bruit_fond)
+
+SNR_haut = mu_haut / sigma_haut
+augmentation = mu_haut - mu_bas
+SNR_relatif = augmentation / sigma_bas
+
+sem_haut = sigma_haut / np.sqrt(len(signal_haut))
+sem_bas = sigma_bas / np.sqrt(len(bruit_fond))
+sem_augmentation = np.sqrt(sem_haut**2 + sem_bas**2)
+
+print("="*60)
+print("STATISTIQUES")
+print("="*60)
+print(f"Signal haut:")
+print(f"  - Moyenne: {mu_haut:.6f} V")
+print(f"  - Écart-type: {sigma_haut:.6f} V")
+print(f"  - SEM: {sem_haut:.6f} V")
+print(f"  - Nombre de points: {len(signal_haut)}")
+print(f"\nBruit de fond:")
+print(f"  - Moyenne: {mu_bas:.6f} V")
+print(f"  - Écart-type: {sigma_bas:.6f} V")
+print(f"  - SEM: {sem_bas:.6f} V")
+print(f"  - Nombre de points: {len(bruit_fond)}")
+print(f"\nSNR signal haut: {SNR_haut:.2f}")
+print(f"Augmentation du signal: {augmentation:.6f} ± {sem_augmentation:.6f} V")
+print(f"SNR relatif (augmentation/bruit): {SNR_relatif:.2f}")
+print("="*60)
+
+# ===============================================
+# GRAPHIQUE 1: Signal original avec séparation
+# ===============================================
+plt.figure(figsize=(14, 6))
+plt.plot(temps, signal_mesure, 'b-', alpha=0.5, linewidth=0.8, label='Signal mesuré')
+plt.axhline(bruit_fond_constant, color='red', linestyle='--', linewidth=2, 
+            label=f'Bruit de fond constant: {bruit_fond_constant:.3f} V')
+plt.axhline(mu_haut, color='darkblue', linestyle='--', linewidth=1.5, 
+            label=f'Moyenne signal haut: {mu_haut:.3f} V')
+plt.axhline(mu_bas, color='green', linestyle='--', linewidth=1.5, 
+            label=f'Moyenne bruit: {mu_bas:.3f} V')
+
+# Colorer les zones de signal haut
+temps_haut = temps[indices_haut]
+signal_haut_values = signal_mesure[indices_haut]
+plt.scatter(temps_haut, signal_haut_values, c='orange', s=2, alpha=0.6, 
+            label='Signal haut détecté')
+
+plt.xlabel('Temps (s)', fontsize=14)
+plt.ylabel('Voltage (V)', fontsize=14)
+plt.title('Signal mesuré avec bruit de fond constant', fontsize=16, fontweight='bold')
+plt.legend(loc='best', fontsize=11)
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# ===============================================
+# GRAPHIQUE 2: Signal corrigé
+# ===============================================
+plt.figure(figsize=(14, 6))
+plt.plot(temps, signal_corrige, 'g-', linewidth=1, label='Signal corrigé (- bruit de fond)')
+plt.axhline(seuil_signal, color='purple', linestyle='--', linewidth=2, 
+            label=f'Seuil de détection: {seuil_signal:.3f} V')
+
+# Zone de signal haut
+plt.fill_between(temps, 0, signal_corrige, where=(signal_corrige > seuil_signal), 
+                 alpha=0.4, color='orange', label='Signal haut (au-dessus du seuil)')
+
+plt.xlabel('Temps (s)', fontsize=14)
+plt.ylabel('Voltage (V)', fontsize=14)
+plt.title('Signal corrigé (bruit de fond soustrait)', fontsize=16, fontweight='bold')
+plt.legend(loc='best', fontsize=11)
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+
+# ===============================================
+# GRAPHIQUE 4 (BONUS): Vue d'ensemble
+# ===============================================
+plt.figure(figsize=(14, 6))
+
+# Signal original
+plt.plot(temps, signal_mesure, 'b-', alpha=0.5, linewidth=1, label='Signal mesuré')
+
+# Bruit de fond constant
+plt.axhline(bruit_fond_constant, color='red', linestyle='--', linewidth=2, 
+            label=f'Bruit de fond: {bruit_fond_constant:.3f} V')
+
+# Signal corrigé (décalé pour visibilité)
+offset = bruit_fond_constant
+plt.plot(temps, signal_corrige + offset, 'g-', alpha=0.7, linewidth=1, 
+         label='Signal corrigé (décalé)')
+
+# Seuil de détection
+plt.axhline(seuil_signal + offset, color='purple', linestyle='--', linewidth=1.5, 
+            label=f'Seuil: {seuil_signal:.3f} V')
+
+# Zone de signal haut
+plt.fill_between(temps, offset, signal_corrige + offset, 
+                 where=(signal_corrige > seuil_signal), 
+                 alpha=0.3, color='orange', label='Signal haut détecté')
+
+plt.xlabel('Temps (s)', fontsize=14)
+plt.ylabel('Voltage (V)', fontsize=14)
+plt.title('Analyse complète du signal bruité avec bruit de fond constant', 
+          fontsize=16, fontweight='bold')
+plt.legend(loc='best', fontsize=11)
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()

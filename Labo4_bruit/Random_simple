@@ -1,63 +1,101 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+import os
 
-# Charger les données depuis le fichier CSV
-donnees = np.loadtxt('donnees.csv', delimiter=',', skiprows=1)
+def gaussian(x, amplitude, mean, std_dev, b):
+    return amplitude * np.exp(-((x - mean) ** 2) / (2 * std_dev ** 2)) + b
 
-# Si vous avez déjà séparé votre signal haut:
-signal_haut = donnees  # Remplacez par vos données filtrées
+dossier_script = os.path.dirname(os.path.abspath(__file__))
+fichier_csv = os.path.join(dossier_script, "test4.csv")
 
-# ===============================================
-# QUESTION 4a: Tirer 2 points aléatoirement
-# ===============================================
+data = np.loadtxt(fichier_csv, delimiter=',', skiprows=9)
 
-N_repetitions = 10000  # Nombre de fois qu'on répète le processus
-moyennes = []
+temps = data[:, 0]
+signal = data[:, 1]
 
-for i in range(N_repetitions):
-    # Choisir 2 valeurs au hasard
-    echantillon = np.random.choice(signal_haut, size=2, replace=True)
-    # Calculer la moyenne
-    moyenne = np.mean(echantillon)
-    moyennes.append(moyenne)
+seuil = np.median(signal)
+signal_haut = signal[signal > seuil]
 
-moyennes = np.array(moyennes)
+print(f"Nombre total de points: {len(signal)}")
+print(f"Nombre de points signal haut: {len(signal_haut)}")
 
-# Caractériser la distribution
-print(f"Moyenne des moyennes: {np.mean(moyennes):.6f}")
-print(f"Écart-type (SEM exp): {np.std(moyennes):.6f}")
-print(f"SEM théorique: {np.std(signal_haut) / np.sqrt(2):.6f}")
+N_repetitions = 10000
+N_list = [1, 10, 50, 100]
 
-# Visualiser
-plt.hist(moyennes, bins=50, edgecolor='black')
-plt.xlabel('Valeur de la moyenne')
-plt.ylabel('Fréquence')
-plt.title('Distribution des moyennes (N=2)')
-plt.show()
+toutes_les_moyennes = []
 
-
-# ===============================================
-# QUESTION 4c: Varier le nombre de points N
-# ===============================================
-
-N_valeurs = [2, 5, 10, 20, 50, 100, 200]
-sem_experimental = []
-
-for N in N_valeurs:
-    moyennes_N = []
-    
-    for i in range(1000):
+for N in N_list:
+    for _ in range(N_repetitions):
         echantillon = np.random.choice(signal_haut, size=N, replace=True)
-        moyennes_N.append(np.mean(echantillon))
-    
-    sem = np.std(moyennes_N)
-    sem_experimental.append(sem)
-    print(f"N={N:3d} | SEM exp: {sem:.6f}")
+        toutes_les_moyennes.append(np.mean(echantillon))
 
-# Tracer SEM vs N
-plt.plot(N_valeurs, sem_experimental, 'o-', markersize=8)
-plt.xlabel('Nombre de points N')
-plt.ylabel('SEM')
-plt.title('Erreur standard vs N')
-plt.grid(True)
+toutes_les_moyennes = np.array(toutes_les_moyennes)
+xmin, xmax = toutes_les_moyennes.min(), toutes_les_moyennes.max()
+
+fig, axs = plt.subplots(2, 2, figsize=(14, 10), sharex=True, sharey=True)
+axs = axs.flatten()
+
+SNR_list = []
+
+print("\n=== SNR + Fit gaussien ===")
+
+for ax, N in zip(axs, N_list):
+
+    moyennes = []
+    for _ in range(N_repetitions):
+        echantillon = np.random.choice(signal_haut, size=N, replace=True)
+        moyennes.append(np.mean(echantillon))
+
+    moyennes = np.array(moyennes)
+
+    mu = np.mean(moyennes)
+    sigma = np.std(moyennes)
+    snr = mu / sigma
+    SNR_list.append(snr)
+
+    hist, bins, _ = ax.hist(
+        moyennes,
+        bins=45,
+        alpha=0.8,
+        edgecolor="#6D6C79",
+        color="#AAAFB1"
+    )
+
+    bin_centers = 0.5 * (bins[1:] + bins[:-1])
+
+    initial_guesses = [hist.max(), mu, sigma, hist.min()]
+    popt, pcov = curve_fit(gaussian, bin_centers, hist, p0=initial_guesses)
+
+    xx = np.linspace(xmin, xmax, 600)
+    y_fit = gaussian(xx, *popt)
+
+    y_pred = gaussian(bin_centers, *popt)
+    residuals = hist - y_pred
+    ss_res = np.sum(residuals**2)
+    ss_tot = np.sum((hist - np.mean(hist))**2)
+    r2 = 1 - ss_res / ss_tot
+
+    print(f"N={N:3d} | Moyenne = {mu:.6f} | SEM = {sigma:.6f} | SNR = {snr:.3f} | R² = {r2:.4f} | Fit μ={popt[1]:.6f}, σ={popt[2]:.6f}")
+
+    ax.plot(xx, y_fit, color="#A53718", linewidth=2, label="Fit gaussien")
+    ax.set_title(f"N={N} | SNR={snr:.2f}", fontsize=15)
+    ax.set_xlim(xmin, xmax)
+    ax.set_ylim(0, 725)
+
+snr_min = min(SNR_list)
+snr_max = max(SNR_list)
+augmentation_percent = (snr_max - snr_min) / snr_min * 100
+
+print("\n% Augmentation SNR :", augmentation_percent)
+
+axs[0].legend(fontsize=14)
+
+for ax in axs[2:]:
+    ax.set_xlabel("Valeur de la moyenne (V)", fontsize=16)
+
+for ax in axs[0::2]:
+    ax.set_ylabel("Fréquence", fontsize=16)
+
+plt.tight_layout(rect=[0, 0.05, 0.98, 0.95])
 plt.show()
