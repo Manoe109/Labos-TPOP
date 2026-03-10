@@ -78,9 +78,10 @@ for ax, N in zip(axs, N_list):
 
     print(f"N={N:3d} | Moyenne = {mu:.6f} | SEM = {sigma:.6f} | SNR = {snr:.3f} | R² = {r2:.4f} | Fit μ={popt[1]:.6f}, σ={popt[2]:.6f}")
 
-    ax.plot(xx, y_fit, color="#A53718", linewidth=2, label="Fit gaussien")
-    ax.set_title(f"N={N} | SNR={snr:.2f}", fontsize=15)
+    ax.plot(xx, y_fit, color="#A53718", linewidth=2, label="Courbe d'ajustement gaussienne")
+    ax.set_title(f"N={N} | SNR={snr:.2f}", fontsize=16)
     ax.set_xlim(xmin, xmax)
+    ax.tick_params(axis='both', labelsize=14)
     ax.set_ylim(0, 725)
 
 snr_min = min(SNR_list)
@@ -92,10 +93,10 @@ print("\n% Augmentation SNR :", augmentation_percent)
 axs[0].legend(fontsize=14)
 
 for ax in axs[2:]:
-    ax.set_xlabel("Valeur de la moyenne (V)", fontsize=16)
+    ax.set_xlabel("Valeur de la moyenne (V)", fontsize=18)
 
 for ax in axs[0::2]:
-    ax.set_ylabel("Fréquence", fontsize=16)
+    ax.set_ylabel("Fréquence", fontsize=18)
 
 plt.tight_layout(rect=[0, 0.05, 0.98, 0.95])
 
