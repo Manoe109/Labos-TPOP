@@ -1,0 +1,15 @@
+from itertools import permutations
+
+n_s = 1.5
+n_0 = 1
+n_x = [1.36, 1.45, 1.65, 2.0, 2.2, 2.3]
+
+def reflectance(n_0, n_s, n_1, n_2, n_3):
+    R_num = ((n_0*n_s*n_2)/(n_1*n_3)-(n_1*n_3)/n_2)**2
+    R_deno = ((n_0*n_s*n_2)/(n_1*n_3)+(n_1*n_3)/n_2)**2
+    return R_num/R_deno
+
+for n_1, n_2, n_3 in permutations(n_x, 3):
+    R = reflectance(n_0, n_s, n_1, n_2, n_3)
+    if R < 0.001:
+        print(f"n_1={n_1}, n_2={n_2}, n_3={n_3} => R={R:.4f}")
