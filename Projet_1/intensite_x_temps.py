@@ -1,0 +1,26 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
+
+dossier_script = os.path.dirname(os.path.abspath(__file__))
+fichier_csv = os.path.join(dossier_script, "Projet 1.xlsx")
+
+spectre = pd.read_excel(fichier_csv, sheet_name="Obj4", skiprows=1)
+
+x = spectre["Temps (minutes)"].to_numpy()
+
+y1 = spectre["AT"].to_numpy()
+y2 = spectre["AC"].to_numpy()
+y3 = spectre["MEN"].to_numpy()
+y4 = spectre["MN"].to_numpy()
+
+
+plt.figure(figsize=(10, 6))
+plt.plot(x, y1, label="intensité AT", linestyle='', marker='o', markersize=4,color="#800080")
+plt.plot(x, y2, label="intensité AC", linestyle='', marker='s', markersize=4,color="#007980")
+plt.plot(x, y3, label="intensité MEN", linestyle='', marker='^', markersize=4,color="#008000")
+plt.plot(x, y4, label="intensité MN", linestyle='', marker='d', markersize=4,color="#FFA500")
+plt.xlabel("Temps (minutes)")
+plt.ylabel("Intensité (lux)")
+plt.show()
