@@ -15,6 +15,14 @@ y2 = spectre["AC"].to_numpy()
 y3 = spectre["MEN"].to_numpy()
 y4 = spectre["MN"].to_numpy()
 
+# Supprimer les deux premiers points abberants
+
+y1 = y1[2:]
+y2 = y2[2:]
+y3 = y3[2:] 
+y4 = y4[2:]
+x = x[2:]
+
 def nettoyer(x, y):
     masque = np.isfinite(x) & np.isfinite(y)
     return x[masque], y[masque]
