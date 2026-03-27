@@ -4,6 +4,12 @@ import os
 import pandas as pd
 from scipy.optimize import curve_fit
 
+#lampe 1 : MN
+#lampe 2 : MEN
+#lampe 3 : AC
+#lampe 4 : AT
+
+
 dossier_script = os.path.dirname(os.path.abspath(__file__))
 fichier_csv = os.path.join(dossier_script, "Projet 1.xlsx")
 
@@ -47,17 +53,20 @@ print(f"MEN : I(x) = {params3[0]:.4f} * exp({params3[1]:.4f} * x)  |  R² = {r2(
 print(f"MN  : I(x) = {params4[0]:.4f} * exp({params4[1]:.4f} * x)  |  R² = {r2(y4, modele(x, *params4)):.4f}")
 
 plt.figure(figsize=(10, 6))
-plt.plot(x, y1, label="intensité AT", linestyle='', marker='o', markersize=4, color="#800080")
-plt.plot(x, y2, label="intensité AC", linestyle='', marker='s', markersize=4, color="#007980")
-plt.plot(x, y3, label="intensité MEN", linestyle='', marker='^', markersize=4, color="#008000")
-plt.plot(x, y4, label="intensité MN", linestyle='', marker='d', markersize=4, color="#FFA500")
+plt.plot(x, y4, label="Lampe 1", linestyle='', marker='d', markersize=4, color="#FFA500")
+plt.plot(x, y3, label="Lampe 2", linestyle='', marker='^', markersize=4, color="#008000")
+plt.plot(x, y2, label="Lampe 3", linestyle='', marker='s', markersize=4, color="#007980")
+plt.plot(x, y1, label="Lampe 4", linestyle='', marker='o', markersize=4, color="#800080")
 
 plt.plot(x_fit, y1_fit, linestyle='-', color="#800080", alpha=0.6)
 plt.plot(x_fit, y2_fit, linestyle='-', color="#007980", alpha=0.6)
 plt.plot(x_fit, y3_fit, linestyle='-', color="#008000", alpha=0.6)
 plt.plot(x_fit, y4_fit, linestyle='-', color="#FFA500", alpha=0.6)
 
-plt.xlabel("Distance (cm)")
-plt.ylabel("Intensité (lux)")
-plt.legend()
+plt.xlabel("Distance (cm)", fontsize=20)
+plt.ylabel("Intensité (lux)", fontsize=20)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+plt.legend(fontsize=20)
+plt.savefig("intensite_x_distance.png", bbox_inches='tight', dpi=600)
 plt.show()

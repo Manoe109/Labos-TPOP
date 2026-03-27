@@ -3,6 +3,11 @@ import matplotlib.pyplot as plt
 import os
 import pandas as pd
 
+#lampe 1 : MN
+#lampe 2 : MEN
+#lampe 3 : AC
+#lampe 4 : AT
+
 dossier_script = os.path.dirname(os.path.abspath(__file__))
 fichier_csv = os.path.join(dossier_script, "spectre_mn.csv")
 duree_exposition = (5 *10) #mili secondes
@@ -27,6 +32,9 @@ y = np.sum([y1, y2, y3, y4, y5, y6, y7, y8, y9, y10], axis=0)
 
 plt.figure(figsize=(10, 6))
 plt.plot(x, y, label="Spectre total", color="#37379C")
-plt.xlabel("Longueur d'onde (nm)")
-plt.ylabel("Compte")
+plt.xlabel("Longueur d'onde (nm)", fontsize=20)
+plt.ylabel("Compte", fontsize=20)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+plt.savefig("spectres_individuels.png", bbox_inches='tight', dpi=600)
 plt.show()

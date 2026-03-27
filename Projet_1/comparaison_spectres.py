@@ -3,6 +3,11 @@ import matplotlib.pyplot as plt
 import os
 import pandas as pd
 
+#lampe 1 : MN
+#lampe 2 : MEN
+#lampe 3 : AC
+#lampe 4 : AT
+
 #aller chercher fichier
 dossier_script = os.path.dirname(os.path.abspath(__file__))
 
@@ -120,13 +125,16 @@ y_ac = np.sum([y1_ac, y2_ac, y3_ac, y4_ac, y5_ac, y6_ac, y7_ac, y8_ac, y9_ac, y1
 x = spectre_men["lambda"].to_numpy()
 
 plt.figure(figsize=(10, 6))
-plt.plot(x, y_atbleu, label="Spectre lampe Alex bleu", color="#040470")
-plt.plot(x, y_atrouge, label="Spectre lampe Alex rouge", color="#841616")
-plt.plot(x, y_atblanc, label="Spectre lampe Alex blanc", color="#007980")
-plt.plot(x, y_mn, label="Spectre lampe Mathilde", color='#008000')
-plt.plot(x, y_men, label="Spectre lampe Marie-Eve", color='#FFA500')
-plt.plot(x, y_ac, label="Spectre lampe Annie-Claude", color='#800080')
-plt.xlabel("Longueur d'onde (nm)")
-plt.ylabel("Compte")
-plt.legend()
+plt.plot(x, y_mn, label="Lampe 1", color='#008000')
+plt.plot(x, y_men, label="Lampe 2", color='#FFA500')
+plt.plot(x, y_ac, label="Lampe 3", color='#800080')
+plt.plot(x, y_atrouge, label="Lampe 4.1", color="#841616")
+plt.plot(x, y_atblanc, label="Lampe 4.2", color="#007980")
+plt.plot(x, y_atbleu, label="Lampe 4.3", color="#040470")
+plt.xlabel("Longueur d'onde (nm)", fontsize=20)
+plt.ylabel("Compte", fontsize=20)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+plt.legend(fontsize=20)
+plt.savefig("spectres_comparaison.png", bbox_inches='tight', dpi=600)
 plt.show()
