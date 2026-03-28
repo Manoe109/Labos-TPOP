@@ -1,0 +1,23 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
+
+
+dossier_script = os.path.dirname(os.path.abspath(__file__))
+fichier_csv = os.path.join(dossier_script, "Projet 1.xlsx")
+
+spectre = pd.read_excel(fichier_csv, sheet_name="Spectre", skiprows=0)
+
+x = spectre["Wavelength"].to_numpy()
+
+y = spectre["Spectral irradiance"].to_numpy()
+
+
+plt.plot(x, y, label="Spectre solaire", linestyle='-', color="#FFA500")
+plt.xlabel("Longueur d'onde (nm)", fontsize=20)
+plt.ylabel("Irradiance (W/m²/nm)", fontsize=20)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18) 
+plt.savefig("spectre_solaire.png", bbox_inches='tight', dpi=600)
+plt.show()

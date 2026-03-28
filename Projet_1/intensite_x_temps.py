@@ -42,10 +42,10 @@ b = np.mean(y2)
 c = np.mean(y3)
 d = np.mean(y4)
 
-print(f"AT  : I(t) = {a:.4f}  |  R² = {r2(y1, np.full_like(y1, a)):.4f}")
-print(f"AC  : I(t) = {b:.4f}  |  R² = {r2(y2, np.full_like(y2, b)):.4f}")
-print(f"MEN : I(t) = {c:.4f}  |  R² = {r2(y3, np.full_like(y3, c)):.4f}")
-print(f"MN  : I(t) = {d:.4f}  |  R² = {r2(y4, np.full_like(y4, d)):.4f}")
+print(f"AT (4)  : I(t) = {a:.4f}  |  R² = {r2(y1, np.full_like(y1, a)):.4f}")
+print(f"AC (3)  : I(t) = {b:.4f}  |  R² = {r2(y2, np.full_like(y2, b)):.4f}")
+print(f"MEN (2) : I(t) = {c:.4f}  |  R² = {r2(y3, np.full_like(y3, c)):.4f}")
+print(f"MN (1)  : I(t) = {d:.4f}  |  R² = {r2(y4, np.full_like(y4, d)):.4f}")
 
 x_fit = np.linspace(np.nanmin(x), np.nanmax(x), 300)
 

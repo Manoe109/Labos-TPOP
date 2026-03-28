@@ -9,7 +9,7 @@ import pandas as pd
 #lampe 4 : AT
 
 dossier_script = os.path.dirname(os.path.abspath(__file__))
-fichier_csv = os.path.join(dossier_script, "spectre_mn.csv")
+fichier_csv = os.path.join(dossier_script, "spectre_at_bleu.csv")
 duree_exposition = (5 *10) #mili secondes
 
 spectre = pd.read_csv(fichier_csv)
@@ -36,5 +36,5 @@ plt.xlabel("Longueur d'onde (nm)", fontsize=20)
 plt.ylabel("Compte", fontsize=20)
 plt.xticks(fontsize=18)
 plt.yticks(fontsize=18)
-plt.savefig("spectres_individuels.png", bbox_inches='tight', dpi=600)
+plt.savefig("spectres_individuels4.png", bbox_inches='tight', dpi=600)
 plt.show()
