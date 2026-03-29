@@ -11,6 +11,10 @@ import pandas as pd
 #aller chercher fichier
 dossier_script = os.path.dirname(os.path.abspath(__file__))
 
+lampe_1 ="#B0B0B0"
+lampe_2 = "#575757"
+lampe_3 = "#3E3E3E"
+lampe_4 = "#000000"
 
 #spectre 1 lampe alex bleu
 fichier_csv_atbleu = os.path.join(dossier_script, "spectre_at_bleu.csv")
@@ -125,16 +129,16 @@ y_ac = np.sum([y1_ac, y2_ac, y3_ac, y4_ac, y5_ac, y6_ac, y7_ac, y8_ac, y9_ac, y1
 x = spectre_men["lambda"].to_numpy()
 
 plt.figure(figsize=(10, 6))
-#plt.plot(x, y_mn, label="Lampe 1", linestyle='-', color="#609160")
-#plt.plot(x, y_men, label="Lampe 2", linestyle='-', color='#FFA500')
-#plt.plot(x, y_ac, label="Lampe 3", linestyle='-', color='#800080')
-plt.plot(x, y_atbleu, label="Lampe 4.1", linestyle='-', color="#33333F")
-plt.plot(x, y_atblanc, label="Lampe 4.2", linestyle='-', color="#09DEE9")
-plt.plot(x, y_atrouge, label="Lampe 4.3", linestyle='-', color="#AC4F4F")
+#plt.plot(x, y_mn, label="Lampe 1", linestyle='-', color=lampe_1)
+plt.plot(x, y_men, label="Lampe 2", linestyle='-', color=lampe_2)
+#plt.plot(x, y_ac, label="Lampe 3", linestyle='-', color=lampe_3)
+#plt.plot(x, y_atbleu, label="Lampe 4", linestyle='-', color=lampe_4)
+#plt.plot(x, y_atblanc, label="Lampe 4.2", linestyle='-', color="#09DEE9")
+#plt.plot(x, y_atrouge, label="Lampe 4.3", linestyle='-', color="#AC4F4F")
 plt.xlabel("Longueur d'onde (nm)", fontsize=20)
 plt.ylabel("Compte", fontsize=20)
 plt.xticks(fontsize=18)
 plt.yticks(fontsize=18)
 plt.legend(fontsize=20)
-plt.savefig("spectres_comparaison_at.png", bbox_inches='tight', dpi=600)
+plt.savefig("spectres_comparaison_2.png", bbox_inches='tight', dpi=600)
 plt.show()

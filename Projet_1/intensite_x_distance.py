@@ -10,6 +10,11 @@ from scipy.optimize import curve_fit
 #lampe 4 : AT
 
 
+lampe_1 ="#B0B0B0"
+lampe_2 = "#727272"
+lampe_3 = "#313131"
+lampe_4 = "#000000"
+
 dossier_script = os.path.dirname(os.path.abspath(__file__))
 fichier_csv = os.path.join(dossier_script, "Projet 1.xlsx")
 
@@ -47,24 +52,24 @@ y2_fit = modele(x_fit, *params2)
 y3_fit = modele(x_fit, *params3)
 y4_fit = modele(x_fit, *params4)
 
-print(f"AT  (4) : I(x) = {params1[0]:.4f} * exp({params1[1]:.4f} * x)  |  R² = {r2(y1, modele(x, *params1)):.4f}")
-print(f"AC  (3) : I(x) = {params2[0]:.4f} * exp({params2[1]:.4f} * x)  |  R² = {r2(y2, modele(x, *params2)):.4f}")
-print(f"MEN (2) : I(x) = {params3[0]:.4f} * exp({params3[1]:.4f} * x)  |  R² = {r2(y3, modele(x, *params3)):.4f}")
-print(f"MN  (1) : I(x) = {params4[0]:.4f} * exp({params4[1]:.4f} * x)  |  R² = {r2(y4, modele(x, *params4)):.4f}")
+print(f"AT  (4): I(x) = {params1[0]:.4f} * exp({params1[1]:.4f} * x)  |  R² = {r2(y1, modele(x, *params1)):.4f}")
+print(f"AC  (3): I(x) = {params2[0]:.4f} * exp({params2[1]:.4f} * x)  |  R² = {r2(y2, modele(x, *params2)):.4f}")
+print(f"MEN (2): I(x) = {params3[0]:.4f} * exp({params3[1]:.4f} * x)  |  R² = {r2(y3, modele(x, *params3)):.4f}")
+print(f"MN  (1): I(x) = {params4[0]:.4f} * exp({params4[1]:.4f} * x)  |  R² = {r2(y4, modele(x, *params4)):.4f}")
 
 plt.figure(figsize=(10, 6))
-plt.plot(x, y4, label="Lampe 1", linestyle='', marker='d', markersize=4, color="#FFA500")
-plt.plot(x, y3, label="Lampe 2", linestyle='', marker='^', markersize=4, color="#008000")
-plt.plot(x, y2, label="Lampe 3", linestyle='', marker='s', markersize=4, color="#007980")
-plt.plot(x, y1, label="Lampe 4", linestyle='', marker='o', markersize=4, color="#800080")
+plt.plot(x, y4, label="Lampe 1", linestyle='', marker='^', markersize=4, color=lampe_1)
+plt.plot(x, y3, label="Lampe 2", linestyle='', marker='^', markersize=4, color=lampe_2, markerfacecolor='none')
+plt.plot(x, y2, label="Lampe 3", linestyle='', marker='o', markersize=4, color=lampe_3)
+plt.plot(x, y1, label="Lampe 4", linestyle='', marker='o', markersize=4, color=lampe_4, markerfacecolor='none')
 
-plt.plot(x_fit, y1_fit, linestyle='-', color="#800080", alpha=0.6)
-plt.plot(x_fit, y2_fit, linestyle='-', color="#007980", alpha=0.6)
-plt.plot(x_fit, y3_fit, linestyle='-', color="#008000", alpha=0.6)
-plt.plot(x_fit, y4_fit, linestyle='-', color="#FFA500", alpha=0.6)
+plt.plot(x_fit, y4_fit, linestyle='-', color=lampe_1)
+plt.plot(x_fit, y3_fit, linestyle='-', color=lampe_2)
+plt.plot(x_fit, y2_fit, linestyle='-', color=lampe_3)  
+plt.plot(x_fit, y1_fit, linestyle='-', color=lampe_4)
 
 plt.xlabel("Distance (cm)", fontsize=20)
-plt.ylabel("Intensité (lux)", fontsize=20)
+plt.ylabel("Éclairement (lux)", fontsize=20)
 plt.xticks(fontsize=18)
 plt.yticks(fontsize=18)
 plt.legend(fontsize=20)
