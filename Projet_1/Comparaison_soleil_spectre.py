@@ -26,24 +26,23 @@ y_lampe_norm = y_lampe / np.max(y_lampe)
 fig, ax1 = plt.subplots(figsize=(10, 6))
 
 # axe compte
-couleur_lampe = "#696969"
+couleur_lampe = "#7293C5"
 ax1.plot(x_lampe, y_lampe_norm, color=couleur_lampe, label="Intensité de la lampe")
-ax1.set_xlabel("Longueur d'onde (nm)", fontsize=20)
-ax1.set_ylabel("Intensité normalisée", fontsize=20, color=couleur_lampe)
-ax1.tick_params(axis='y', labelcolor=couleur_lampe, labelsize=18)
+ax1.tick_params(axis='y', labelsize=18)
 ax1.tick_params(axis='x', labelsize=18)
 
 # axe irradiance
-couleur_soleil = "#121212"
+couleur_soleil = "black"
 ax2 = ax1.twinx()
 ax2.plot(x_soleil, y_soleil_norm, color=couleur_soleil, label="Irradiance solaire")
-ax2.set_ylabel("Irradiance normalisée", fontsize=20, color=couleur_soleil)
-ax2.tick_params(axis='y', labelcolor=couleur_soleil, labelsize=18)
+ax2.set_yticks([])
 
 # légende
 lines1, labels1 = ax1.get_legend_handles_labels()
 lines2, labels2 = ax2.get_legend_handles_labels()
 ax1.legend(lines1 + lines2, labels1 + labels2, fontsize=14)
+ax1.set_xlabel("Longueur d'onde (nm)", fontsize=20)
+ax1.set_ylabel("Intensité normalisée", fontsize=20)
 
 plt.tight_layout()
 plt.savefig(os.path.join(dossier_script, "spectre_combine.png"), bbox_inches='tight', dpi=600)
