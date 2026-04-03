@@ -4,7 +4,7 @@ const int sensorPin = A0;
 // Paramètres du circuit
 const float R_load       = 10000.0; // Résistance de charge en Ohms
 const float V_ref        = 5.0;     // Tension de référence Arduino
-const float responsivity = 0.45;    // Responsivité DET100A2 (A/W)     selon la longueur d'onde, à changer
+const float responsivity = 0.325;    // Responsivité DET100A2 (A/W)     selon la longueur d'onde, à changer
 
 void setup() {
   Serial.begin(9600);

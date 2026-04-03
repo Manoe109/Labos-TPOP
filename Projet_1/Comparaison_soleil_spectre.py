@@ -13,7 +13,7 @@ x_soleil = spectre_solaire["Wavelength"].to_numpy()
 y_soleil = spectre_solaire["Spectral irradiance"].to_numpy()
 
 # charger spectre lampe
-fichier_csv = os.path.join(dossier_script, "spectre_at_bleu.csv")
+fichier_csv = os.path.join(dossier_script, "spectre_mn.csv")
 spectre = pd.read_csv(fichier_csv)
 x_lampe = spectre["lambda"].to_numpy()
 y_lampe = np.sum([spectre[str(i)].to_numpy() for i in range(1, 11)], axis=0)
@@ -26,8 +26,8 @@ y_lampe_norm = y_lampe / np.max(y_lampe)
 fig, ax1 = plt.subplots(figsize=(10, 6))
 
 # axe compte
-couleur_lampe = "#7293C5"
-ax1.plot(x_lampe, y_lampe_norm, color=couleur_lampe, label="Intensité de la lampe")
+couleur_lampe = "#7293C5" #couleur à vérifier
+ax1.plot(x_lampe, y_lampe_norm, color=couleur_lampe, label="Irradiance de la lampe 1")
 ax1.tick_params(axis='y', labelsize=18)
 ax1.tick_params(axis='x', labelsize=18)
 
@@ -45,5 +45,5 @@ ax1.set_xlabel("Longueur d'onde (nm)", fontsize=20)
 ax1.set_ylabel("Intensité normalisée", fontsize=20)
 
 plt.tight_layout()
-plt.savefig(os.path.join(dossier_script, "spectre_combine.png"), bbox_inches='tight', dpi=600)
+plt.savefig("spectre_combine.png", bbox_inches='tight', dpi=600)
 plt.show()

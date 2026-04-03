@@ -4,7 +4,7 @@ import os
 import pandas as pd
 
 # Couleurs et styles option C
-C1, C3, C4 = "black", "#B99851", "#7293C5"
+C1, C3, C4 = "#7293C5", "#B99851", "#3B6D11"
 LS1, LS3, LS4 = '-', ':', '-.'
 
 dossier_script = os.path.dirname(os.path.abspath(__file__))
@@ -15,18 +15,30 @@ def charger_spectre(fichier):
     y = np.sum([df[str(i)].to_numpy() for i in range(1, 11)], axis=0)
     return x, y
 
-x_mn, y_mn   = charger_spectre(os.path.join(dossier_script, "spectre_mn.csv"))       # Lampe 1
-x_ac, y_ac   = charger_spectre(os.path.join(dossier_script, "spectre_ac.csv"))       # Lampe 3
-x_at, y_at   = charger_spectre(os.path.join(dossier_script, "spectre_at_blanc.csv")) # Lampe 4
+x_mn, y_mn = charger_spectre(os.path.join(dossier_script, "spectre_mn.csv"))
+x_ac, y_ac = charger_spectre(os.path.join(dossier_script, "spectre_ac.csv"))
+x_at, y_at = charger_spectre(os.path.join(dossier_script, "spectre_at_blanc.csv"))
+
+# Normalisation par le maximum de la lampe 1 uniquement
+max_mn = np.max(y_mn)
+y_mn_norm = y_mn / max_mn
+y_ac_norm = y_ac / max_mn
+y_at_norm = y_at / max_mn
+
+# Calcul des écarts en % au pic maximal
+ecart_ac = (np.max(y_mn) - np.max(y_ac)) / np.max(y_mn) * 100
+ecart_at = (np.max(y_mn) - np.max(y_at)) / np.max(y_mn) * 100
+print(f"Écart lampe 1 vs lampe 3 : {ecart_ac:.1f} %")
+print(f"Écart lampe 1 vs lampe 4 : {ecart_at:.1f} %")
 
 fig, ax = plt.subplots(figsize=(10, 6))
-ax.plot(x_mn, y_mn, label="Lampe 1", color=C1, linestyle=LS1, linewidth=1.5)
-ax.plot(x_ac, y_ac, label="Lampe 3", color=C3, linestyle=LS3, linewidth=1.5)
-ax.plot(x_at, y_at, label="Lampe 4", color=C4, linestyle=LS4, linewidth=1.5)
+ax.plot(x_mn, y_mn_norm, label="Lampe 1", color=C1, linestyle=LS1, linewidth=1.5)
+ax.plot(x_ac, y_ac_norm, label="Lampe 3", color=C3, linestyle=LS3, linewidth=1.5)
+ax.plot(x_at, y_at_norm, label="Lampe 4", color=C4, linestyle=LS4, linewidth=1.5)
 ax.set_xlabel("Longueur d'onde (nm)", fontsize=20)
-ax.set_ylabel("Compte", fontsize=20)
+ax.set_ylabel("Compte normalisé", fontsize=20)
 ax.tick_params(labelsize=18)
 ax.legend(fontsize=16)
 plt.tight_layout()
-plt.savefig("spectres_comparaison_1-3-4.png", bbox_inches='tight', dpi=600)
+plt.savefig("spectres_comparaison_1-3-4V3.png", bbox_inches='tight', dpi=600)
 plt.show()

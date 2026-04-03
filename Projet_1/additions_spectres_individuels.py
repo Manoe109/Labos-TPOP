@@ -8,10 +8,10 @@ import pandas as pd
 #lampe 3 : AC
 #lampe 4 : AT
 
-lampe_1 ="#B0B0B0"
-lampe_2 = "#575757"
-lampe_3 = "#3E3E3E"
-lampe_4 = "#000000"
+lampe_1 ="#7293C5"
+lampe_2 = "black"
+lampe_3 = "#B99851"
+lampe_4 = "#3B6D11"
 
 dossier_script = os.path.dirname(os.path.abspath(__file__))
 fichier_csv = os.path.join(dossier_script, "spectre_men.csv")

@@ -5,7 +5,7 @@ import pandas as pd
 from scipy.optimize import curve_fit
 
 # Couleurs et styles option C
-C1, C2, C3, C4 = "black", "#7293C5", "#B99851", "#3B6D11"
+C1, C2, C3, C4 = "#7293C5", "black", "#B99851", "#3B6D11"
 LS1, LS2, LS3, LS4 = '-', '--', ':', '-.'
 
 dossier_script = os.path.dirname(os.path.abspath(__file__))
@@ -66,7 +66,7 @@ for (nom, y, c, m, ls), p in zip(donnees, params_list):
     ax.plot(x_fit, modele(x_fit, *p), linestyle=ls, color=c, linewidth=1.5, alpha=0.8)
 
 ax.set_xlabel("Distance (cm)", fontsize=20)
-ax.set_ylabel("Intensite (lux)", fontsize=20)
+ax.set_ylabel("Intensité (lux)", fontsize=20)
 ax.set_xlim(-1, 60)
 ax.set_ylim(-1000, 48000)
 ax.tick_params(labelsize=18)
