@@ -3,43 +3,45 @@ import matplotlib.pyplot as plt
 import os
 import pandas as pd
 
-#lampe 1 : MN
-#lampe 2 : MEN
-#lampe 3 : AC
-#lampe 4 : AT
-
-lampe_1 ="#7293C5"
 lampe_2 = "black"
-lampe_3 = "#B99851"
-lampe_4 = "#3B6D11"
 
 dossier_script = os.path.dirname(os.path.abspath(__file__))
 fichier_csv = os.path.join(dossier_script, "spectre_men.csv")
-duree_exposition = (5 *10) #mili secondes
 
 spectre = pd.read_csv(fichier_csv)
-
 x = spectre["lambda"].to_numpy()
+y = np.sum([spectre[str(i)].to_numpy() for i in range(1, 11)], axis=0)
 
-y1 = spectre["1"].to_numpy()
-y2 = spectre["2"].to_numpy()
-y3 = spectre["3"].to_numpy()
-y4 = spectre["4"].to_numpy()
-y5 = spectre["5"].to_numpy()
-y6 = spectre["6"].to_numpy()
-y7 = spectre["7"].to_numpy()
-y8 = spectre["8"].to_numpy()
-y9 = spectre["9"].to_numpy()
-y10 = spectre["10"].to_numpy()
+# Normalisation
+y_norm = y / np.max(y)
 
-y = np.sum([y1, y2, y3, y4, y5, y6, y7, y8, y9, y10], axis=0)
+# Raies du mercure (NIST)
+raies_hg = [404.7, 435.9, 545.9, 576.9]
 
+# Pics du phosphore triphosphore CFL (Jüstel et al., 1998)
+raies_phosphore = [486.9, 611.4]
 
-plt.figure(figsize=(10, 6))
-plt.plot(x, y, label="Spectre total", color=lampe_2)
-plt.xlabel("Longueur d'onde (nm)", fontsize=20)
-plt.ylabel("Compte", fontsize=20)
-plt.xticks(fontsize=18)
-plt.yticks(fontsize=18)
-plt.savefig("spectres_individuels2.png", bbox_inches='tight', dpi=600)
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.plot(x, y_norm, color=lampe_2, linewidth=1.5, label="Spectre mesuré (lampe 2)")
+
+for lam in raies_hg:
+    ax.axvline(lam, color='red', linewidth=1.2, linestyle='--', alpha=0.8,
+               label='Mercure (Hg)' if lam == raies_hg[0] else '')
+    ax.text(lam + 2, 0.97, f"{lam:.0f} nm", fontsize=11, color='red',
+            rotation=90, va='top')
+
+for lam in raies_phosphore:
+    ax.axvline(lam, color='blue', linewidth=1.2, linestyle='--', alpha=0.8,
+               label='Phosphore (P)' if lam == raies_phosphore[0] else '')
+    ax.text(lam + 2, 0.97, f"{lam:.0f} nm", fontsize=11, color='blue',
+            rotation=90, va='top')
+
+ax.set_xlabel("Longueur d'onde (nm)", fontsize=20)
+ax.set_ylabel("Compte normalisé", fontsize=20)
+ax.set_xlim(200, 900)
+ax.set_ylim(-0.05, 1.1)
+ax.tick_params(labelsize=18)
+ax.legend(fontsize=14)
+plt.tight_layout()
+plt.savefig("spectres_individuels2_V3.png", bbox_inches='tight', dpi=600)
 plt.show()
