@@ -27,7 +27,7 @@ fig, ax1 = plt.subplots(figsize=(10, 6))
 
 # axe compte
 couleur_lampe = "#7293C5" #couleur à vérifier
-ax1.plot(x_lampe, y_lampe_norm, color=couleur_lampe, label="Irradiance de la lampe 1")
+ax1.plot(x_lampe, y_lampe_norm, color=couleur_lampe, label="Intensité de la lampe 1")
 ax1.tick_params(axis='y', labelsize=18)
 ax1.tick_params(axis='x', labelsize=18)
 
@@ -42,7 +42,7 @@ lines1, labels1 = ax1.get_legend_handles_labels()
 lines2, labels2 = ax2.get_legend_handles_labels()
 ax1.legend(lines1 + lines2, labels1 + labels2, fontsize=14)
 ax1.set_xlabel("Longueur d'onde (nm)", fontsize=20)
-ax1.set_ylabel("Intensité normalisée", fontsize=20)
+ax1.set_ylabel("Intensité et irradiance normalisées", fontsize=20)
 
 plt.tight_layout()
 plt.savefig("spectre_combine.png", bbox_inches='tight', dpi=600)

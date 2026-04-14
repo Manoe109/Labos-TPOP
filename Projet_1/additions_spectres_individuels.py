@@ -32,7 +32,7 @@ for lam in raies_hg:
 
 for lam in raies_phosphore:
     ax.axvline(lam, color='blue', linewidth=1.2, linestyle='--', alpha=0.8,
-               label='Phosphore (P)' if lam == raies_phosphore[0] else '')
+               label='Matériau luminescent' if lam == raies_phosphore[0] else '')
     ax.text(lam + 2, 0.97, f"{lam:.0f} nm", fontsize=11, color='blue',
             rotation=90, va='top')
 
