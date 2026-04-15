@@ -4,37 +4,35 @@ import matplotlib.pyplot as plt
 import scipy.optimize as opt
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
-excel_path = os.path.join(base_dir, "Projet_2_31_mars.xlsx")
 
-longueur = np.array([137.18, 106.65, 86.31, 65.96, 45.61])
-#angle = np.array([32.92, 25.8, 20.1, 14.67, 9.08]) #si theta 0 = 67.42
-angle = np.array([32.97, 25.85, 20.15, 14.72, 9.13]) #si theta 0 = 67.37
-concentration = np.array([45.45 for i in range(len(longueur))])
+longueur      = np.array([137.18, 106.65, 86.31, 65.96, 45.61])  # mm
+angle         = np.array([32.97, 25.85, 20.15, 14.72, 9.13])     # °
+concentration = 45.45  # g/100 mL
 
-alpha = angle / (longueur * concentration)
-print("Alpha (°/(mm·g/L)) :", alpha)
+# Variable composite c·ℓ (en mm·g/100mL)
+cl = concentration * longueur
 
-def regression_lineaire(x, a):
-    return a * x
+def regression_lineaire(x, alpha_sp):
+    return alpha_sp * x
 
-popt, pcov = opt.curve_fit(regression_lineaire, longueur, angle)
-a = popt[0]
-print(f"Coefficients de la régression linéaire : a = {a:.6f}")
+popt, pcov = opt.curve_fit(regression_lineaire, cl, angle)
+alpha_sp       = popt[0]
+sigma_alpha_sp = np.sqrt(pcov[0, 0])
 
-longueur_fit = np.linspace(min(longueur), max(longueur), 100)
-angle_fit = a * longueur_fit
+print(f"Pouvoir rotatoire spécifique [α] = {alpha_sp:.6f} ± {sigma_alpha_sp:.6f} °·mL·mm⁻¹·g⁻¹")
 
-alpha_moy = np.mean(alpha)
-print(f"Alpha moyen : {alpha_moy:.6f} °/(mm·g/ml)")
+cl_fit    = np.linspace(min(cl), max(cl), 100)
+angle_fit = alpha_sp * cl_fit
 
 plt.figure(figsize=(10, 6))
-plt.scatter(longueur, angle, color='black', s=50, label='Données expérimentales')
-plt.plot(longueur_fit, angle_fit, color='black', linestyle='-', linewidth=2, label='Régression linéaire')
-plt.xlabel("Longueur (mm)", fontsize=14)
-plt.ylabel("Angle (°)", fontsize=14)
-plt.legend()
+plt.scatter(cl, angle, color='black', s=50, label='Données expérimentales')
+plt.plot(cl_fit, angle_fit, color='black', linestyle='-', linewidth=2,
+         label=f'Régression linéaire  $[\\alpha]$ = {alpha_sp:.6f} °·mL·mm⁻¹·g⁻¹')
+plt.xlabel(r"$c \cdot \ell$  (mm·g/100 mL)", fontsize=14)
+plt.ylabel("Angle de rotation (°)", fontsize=14)
+plt.legend(fontsize=11)
+plt.tight_layout()
 
 out_path = os.path.join(base_dir, "plot_glucose_moyenne_lineaire.png")
 plt.savefig(out_path, dpi=600, bbox_inches='tight')
-
 plt.show()

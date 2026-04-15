@@ -1,0 +1,63 @@
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.optimize as opt
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Données glucose
+longueur_glucose      = np.array([137.18, 106.65, 86.31, 65.96, 45.61])
+angle_glucose         = np.array([32.97, 25.85, 20.15, 14.72, 9.13])
+concentration_glucose = 45.45
+
+# Données fructose
+longueur_fructose      = np.array([35.43, 60.78, 86.31, 111.84, 137.18])
+angle_fructose         = np.array([-10.11, -20.48, -30.53, -40.85, -52.05])
+concentration_fructose = 42.8
+
+# Variables composites c·ℓ
+cl_glucose  = concentration_glucose  * longueur_glucose
+cl_fructose = concentration_fructose * longueur_fructose
+
+def regression_lineaire(x, alpha_sp):
+    return alpha_sp * x
+
+# Régressions
+popt_g, pcov_g = opt.curve_fit(regression_lineaire, cl_glucose,  angle_glucose)
+popt_f, pcov_f = opt.curve_fit(regression_lineaire, cl_fructose, angle_fructose)
+
+alpha_sp_g       = popt_g[0]
+sigma_alpha_sp_g = np.sqrt(pcov_g[0, 0])
+
+alpha_sp_f       = popt_f[0]
+sigma_alpha_sp_f = np.sqrt(pcov_f[0, 0])
+
+print(f"Glucose  [α] = {alpha_sp_g:.6f} ± {sigma_alpha_sp_g:.6f} °·mL·mm⁻¹·g⁻¹")
+print(f"Fructose [α] = {alpha_sp_f:.6f} ± {sigma_alpha_sp_f:.6f} °·mL·mm⁻¹·g⁻¹")
+
+# Courbes d'ajustement
+cl_fit_g = np.linspace(min(cl_glucose),  max(cl_glucose),  100)
+cl_fit_f = np.linspace(min(cl_fructose), max(cl_fructose), 100)
+
+fig, ax = plt.subplots(figsize=(10, 6))
+
+ax.scatter(cl_glucose,  angle_glucose,  color='#5A4574', s=50, zorder=3)
+ax.scatter(cl_fructose, angle_fructose, color='#FF5733', s=50, zorder=3)
+
+ax.plot(cl_fit_g, regression_lineaire(cl_fit_g, alpha_sp_g),
+        color='#5A4574', linewidth=2,
+        label=f'Glucose  $[\\alpha]$ = {alpha_sp_g:.6f} °·mL·mm⁻¹·g⁻¹')
+
+ax.plot(cl_fit_f, regression_lineaire(cl_fit_f, alpha_sp_f),
+        color='#FF5733', linewidth=2,
+        label=f'Fructose $[\\alpha]$ = {alpha_sp_f:.6f} °·mL·mm⁻¹·g⁻¹')
+
+ax.axhline(0, color='black', linewidth=0.8, linestyle='--', alpha=0.5)
+ax.set_xlabel(r"$c \cdot \ell$  (mm·g/100 mL)", fontsize=14)
+ax.set_ylabel("Angle de rotation (°)", fontsize=14)
+ax.legend(fontsize=11)
+plt.tight_layout()
+
+out_path = os.path.join(base_dir, "plot_comparaison_lineaire.png")
+plt.savefig(out_path, dpi=600, bbox_inches='tight')
+plt.show()
