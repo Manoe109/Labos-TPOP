@@ -9,8 +9,8 @@ from scipy.optimize import curve_fit
 # PARAMÈTRES — faciles à modifier
 # ============================================================
 theta_zero = 302.61
-ANGLE_MIN  = -130
-ANGLE_MAX  =   80
+ANGLE_MIN  = -120
+ANGLE_MAX  =   60
 # ============================================================
 
 base_dir   = os.path.dirname(os.path.abspath(__file__))
@@ -98,23 +98,23 @@ for i, col in enumerate(df.columns[2:2+len(vec_col)]):
         legend_label = f"{col} mm  |  θ_max = {x_max:.2f} ± {sigma_theta:.2f}°"
         ax.plot(x_smooth, y_smooth, color=vec_col[i], linewidth=2, label=legend_label)
 
-        ax.axvline(x_max, color=vec_col[i], linestyle='--', linewidth=0.7, alpha=0.4)
+        ax.axvline(x_max, color=vec_col[i], linestyle='--', linewidth=1.5, alpha=0.4)
 
     except RuntimeError:
         print(f"Curve fit échoué pour : {col}")
 
     print(f"{col} mm  |  θ_max = {x_max:.2f} ± {sigma_theta:.2f}°")
 
-ax.axvline(0, color='black', linewidth=1.2, linestyle='-', alpha=0.5, label='θ − θ₀ = 0°')
-ax.set_xlabel("Angle θ − θ₀  (degrés)", fontsize=13)
-ax.set_ylabel("Courant normalisé (u.a.)", fontsize=13)
+ax.axvline(0, color='black', linewidth=1.2, linestyle='-', alpha=0.5)
+ax.set_xlabel("Angle (°)", fontsize=13)
+ax.set_ylabel("Intensité normalisée", fontsize=13)
 ax.legend(fontsize=8.5, loc='upper right', framealpha=0.92)
-ax.grid(True, alpha=0.3)
-ax.set_xlim(ANGLE_MIN, ANGLE_MAX)
+ax.set_xlim(ANGLE_MIN-10, ANGLE_MAX+10)
 ax.set_ylim(-0.05, 1.15)
 
 plt.tight_layout()
-plt.show()
 
 out_path = os.path.join(base_dir, "plot_fructose.png")
-# plt.savefig(out_path, dpi=150, bbox_inches='tight')
+plt.savefig(out_path, dpi=600, bbox_inches='tight')
+
+plt.show()

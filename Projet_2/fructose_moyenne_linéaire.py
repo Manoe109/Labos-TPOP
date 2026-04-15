@@ -1,6 +1,9 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.optimize as opt
+
+base_dir   = os.path.dirname(os.path.abspath(__file__))
 
 longueur = np.array([35.43, 60.78, 86.31, 111.84, 137.18])
 angle = np.array([-10.11, -20.48, -30.53, -40.85, -52.05])
@@ -28,4 +31,8 @@ plt.plot(longueur_fit, angle_fit, color='black', linestyle='-', linewidth=2, lab
 plt.xlabel("Longueur (mm)", fontsize=14)
 plt.ylabel("Angle (°)", fontsize=14)
 plt.legend()
+
+out_path = os.path.join(base_dir, "plot_fructose_moyenne_lineaire.png")
+plt.savefig(out_path, dpi=600, bbox_inches='tight')
+
 plt.show()

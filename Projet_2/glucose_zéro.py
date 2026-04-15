@@ -82,7 +82,7 @@ plt.ylim(-0.05, 1.15)
 plt.legend()
 plt.grid()
 
-out_path = os.path.join(base_dir, "plot_vide.png")
-plt.savefig(out_path, dpi=150, bbox_inches='tight')
+out_path = os.path.join(base_dir, "plot_glucose_vide.png")
+plt.savefig(out_path, dpi=600, bbox_inches='tight')
 
 plt.show()

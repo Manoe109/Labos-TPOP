@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
 theta_zero   = 67.37
-ANGLE_MIN    = 0    
-ANGLE_MAX    = 100   
+ANGLE_MIN    = -30    
+ANGLE_MAX    = 150   
 sheet_name   = "Essai1"
 longueur     = ['137.18 mm', '106.65 mm', '86.31 mm', '65.96 mm', '45.61 mm'] 
 
@@ -95,7 +95,7 @@ for i, col in enumerate(longueur):
 
 ax.set_xlabel("Angle (degrés)", fontsize=16)
 ax.set_ylabel("Intensité normalisée", fontsize=16)
-ax.set_xlim(ANGLE_MIN, ANGLE_MAX)
+ax.set_xlim(ANGLE_MIN-5, ANGLE_MAX+5)
 ax.set_ylim(-0.05, 1.15)
 
 ax.legend(fontsize=12, loc='upper right', framealpha=0.92)
@@ -103,6 +103,6 @@ ax.legend(fontsize=12, loc='upper right', framealpha=0.92)
 plt.tight_layout()
 
 out_path = os.path.join(base_dir, "plot_glucose.png")
-plt.savefig(out_path, dpi=150, bbox_inches='tight')
+plt.savefig(out_path, dpi=600, bbox_inches='tight')
 
 plt.show()

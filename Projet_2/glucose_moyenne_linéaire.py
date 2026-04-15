@@ -1,6 +1,10 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.optimize as opt
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+excel_path = os.path.join(base_dir, "Projet_2_31_mars.xlsx")
 
 longueur = np.array([137.18, 106.65, 86.31, 65.96, 45.61])
 #angle = np.array([32.92, 25.8, 20.1, 14.67, 9.08]) #si theta 0 = 67.42
@@ -29,4 +33,8 @@ plt.plot(longueur_fit, angle_fit, color='black', linestyle='-', linewidth=2, lab
 plt.xlabel("Longueur (mm)", fontsize=14)
 plt.ylabel("Angle (°)", fontsize=14)
 plt.legend()
+
+out_path = os.path.join(base_dir, "plot_glucose_moyenne_lineaire.png")
+plt.savefig(out_path, dpi=600, bbox_inches='tight')
+
 plt.show()

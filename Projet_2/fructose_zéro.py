@@ -88,7 +88,8 @@ ax.set_xlim(ANGLE_MIN, ANGLE_MAX)
 ax.set_ylim(-0.05, 1.15)
 
 plt.tight_layout()
-plt.show()
 
-out_path = os.path.join(base_dir, "plot_vide.png")
-# plt.savefig(out_path, dpi=150, bbox_inches='tight')
+out_path = os.path.join(base_dir, "plot_fructose_vide.png")
+plt.savefig(out_path, dpi=600, bbox_inches='tight')
+
+plt.show()
