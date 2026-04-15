@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import scipy.optimize as opt
 
 longueur = np.array([137.18, 106.65, 86.31, 65.96, 45.61])
-angle = np.array([32.92, 25.8, 20.1, 14.67, 9.08]) #si theta 0 = 64.42
-#angle = np.array([32.97, 25.85, 20.15, 14.72, 9.13]) #si theta 0 = 67.37
+#angle = np.array([32.92, 25.8, 20.1, 14.67, 9.08]) #si theta 0 = 67.42
+angle = np.array([32.97, 25.85, 20.15, 14.72, 9.13]) #si theta 0 = 67.37
 concentration = np.array([45.45 for i in range(len(longueur))])
 
 alpha = angle / (longueur * concentration)
