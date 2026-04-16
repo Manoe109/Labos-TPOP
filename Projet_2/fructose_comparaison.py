@@ -6,54 +6,79 @@ from scipy.optimize import curve_fit
 
 
 # ============================================================
-# PARAMÈTRES — faciles à modifier
+# PARAMÈTRES
 # ============================================================
 theta_zero = 302.61
-ANGLE_MIN  = -120
-ANGLE_MAX  =   60
+ANGLE_MIN  = -75
+ANGLE_MAX  = 15
+
+longueurs = ['25.261 mm',  '50.696 mm', '76.131 mm', '101.566 mm', '127.001 mm'] 
+results = []
+
+vec_col = ["#B4A8C9", "#9982BB", "#916AC9", "#5A4574", '#000000', "#FF5733"]
+
 # ============================================================
 
-base_dir   = os.path.dirname(os.path.abspath(__file__))
+base_dir = os.path.dirname(os.path.abspath(__file__))
 excel_path = os.path.join(base_dir, "Projet_2_31_mars.xlsx")
 
 df = pd.read_excel(excel_path, sheet_name="Essai2", header=1)
 
-angles_raw = df.iloc[:, 1].values.astype(float)
+# nettoyage noms colonnes
+df.columns = df.columns.astype(str).str.strip()
 
-mask = (angles_raw >= 180) & (angles_raw <= 360)
-x_raw   = angles_raw[mask]
-x_shift = x_raw - theta_zero
+angles_raw = pd.to_numeric(df.iloc[:, 1], errors='coerce').values
+angles = angles_raw - theta_zero
 
 
 def sinusoidal(x, A, phi, C):
     return A * np.cos(np.deg2rad(2 * x + phi)) + C
 
-vec_col = ["#B4A8C9", "#9982BB", "#916AC9", "#5A4574", '#000000', "#FF5733"]
 
 fig, ax = plt.subplots(figsize=(13, 7))
 
-for i, col in enumerate(df.columns[2:2+len(vec_col)]):
 
-    y_raw      = pd.to_numeric(df[col], errors='coerce').values
-    y_filtered = y_raw[mask]
+# ============================================================
+# MATCH DES COLONNES EXCEL
+# ============================================================
+colonnes_trouvees = {
+    l: next((c for c in df.columns if l in c), None)
+    for l in longueurs
+}
 
-    valid = ~np.isnan(y_filtered)
-    if valid.sum() < 5:
+# ============================================================
+# BOUCLE PRINCIPALE
+# ============================================================
+for i, (longueur, col) in enumerate(colonnes_trouvees.items()):
+
+    if col is None:
+        print(f"Colonne introuvable pour {longueur}")
         continue
 
-    x = x_shift[valid]
-    y = y_filtered[valid]
+    y_raw = pd.to_numeric(df[col], errors='coerce').values
 
+    # masque propre
+    mask = ~np.isnan(angles) & ~np.isnan(y_raw)
+
+    if np.sum(mask) < 5:
+        continue
+
+    x = angles[mask]
+    y = y_raw[mask]
+
+    # normalisation
     y_shifted = y - np.min(y)
     y_max = np.max(y_shifted)
+
     if y_max == 0:
         continue
+
     y_norm = y_shifted / y_max
 
     ax.scatter(x, y_norm, color=vec_col[i], s=25, alpha=0.55, zorder=3)
 
     try:
-        p0     = [0.5, 0.0, 0.5]
+        p0 = [0.5, 0.0, 0.5]
         bounds = ([-1.5, -360, -0.5], [1.5, 360, 1.5])
 
         popt, pcov = curve_fit(
@@ -78,41 +103,77 @@ for i, col in enumerate(df.columns[2:2+len(vec_col)]):
             x_max += 180
 
         # ============================================================
-        # INCERTITUDE (ajout code #1 adapté)
+        # INCERTITUDE CORRIGÉE
         # ============================================================
-        try:
-            dA = np.sqrt(pcov[0, 0]) if pcov is not None else np.nan
-            dphi = np.sqrt(pcov[1, 1]) if pcov is not None else np.nan
+        if pcov is not None:
+            dphi = np.sqrt(pcov[1, 1])
+        else:
+            dphi = np.nan
 
-            sigma_theta = abs(x_max) * np.sqrt(
-                (dphi / (abs(phi) + 1e-12))**2
-            )
-        except:
-            sigma_theta = np.nan
+        sigma_theta = 0.5 * dphi
 
         # ============================================================
 
         x_smooth = np.linspace(ANGLE_MIN - 5, ANGLE_MAX + 5, 2000)
         y_smooth = sinusoidal(x_smooth, *popt)
 
-        legend_label = f"{col} mm  |  θ_max = {x_max:.2f} ± {sigma_theta:.2f}°"
-        ax.plot(x_smooth, y_smooth, color=vec_col[i], linewidth=2, label=legend_label)
+        ax.plot(
+            x_smooth,
+            y_smooth,
+            color=vec_col[i],
+            linewidth=2,
+            label=f"{longueur} mm | θ = {x_max:.2f} ± {sigma_theta:.2f}°"
+        )
 
-        ax.axvline(x_max, color=vec_col[i], linestyle='--', linewidth=1.5, alpha=0.4)
+        ax.axvline(x_max, color=vec_col[i], linestyle='--', linewidth=0.7, alpha=0.4)
+
+        # barres d'erreur
+        ax.errorbar(
+            x_max,
+            1.0,
+            xerr=sigma_theta,
+            fmt='o',
+            color=vec_col[i],
+            capsize=10,
+            markersize=5,
+            zorder=10
+        )
+
+        print(f"{longueur} mm | θ = {x_max:.2f} ± {sigma_theta:.2f}°")
+
+        results.append({
+            "Longueur": longueur,
+            "Theta (deg)": x_max,
+            "Delta Theta (deg)": sigma_theta
+        })
 
     except RuntimeError:
-        print(f"Curve fit échoué pour : {col}")
+        print(f"Curve fit échoué pour : {longueur}")
 
-    print(f"{col} mm  |  θ_max = {x_max:.2f} ± {sigma_theta:.2f}°")
 
+# ============================================================
+# PLOT FINAL
+# ============================================================
 ax.axvline(0, color='black', linewidth=1.2, linestyle='-', alpha=0.5)
-ax.set_xlabel("Angle (°)", fontsize=13)
-ax.set_ylabel("Intensité normalisée", fontsize=13)
-ax.legend(fontsize=8.5, loc='upper right', framealpha=0.92)
-ax.set_xlim(ANGLE_MIN-10, ANGLE_MAX+10)
+
+ax.set_xlabel("Angle (degrés)", fontsize=13)
+ax.set_ylabel("Courant normalisé (u.a.)", fontsize=13)
+ax.set_xlim(ANGLE_MIN, ANGLE_MAX)
 ax.set_ylim(-0.05, 1.15)
 
+ax.legend(fontsize=8.5, loc='upper right', framealpha=0.92)
+ax.grid(True, alpha=0.3)
+
 plt.tight_layout()
+
+# ============================================================
+# EXPORT
+# ============================================================
+out_path = os.path.join(base_dir, "plot_fructose.png")
+df_out = pd.DataFrame(results)
+
+csv_path = os.path.join(base_dir, "theta_fructose.csv")
+df_out.to_csv(csv_path, index=False)
 
 out_path = os.path.join(base_dir, "plot_fructose.png")
 plt.savefig(out_path, dpi=600, bbox_inches='tight')

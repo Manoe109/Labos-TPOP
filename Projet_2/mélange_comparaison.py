@@ -5,10 +5,11 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
 theta_zero   = 121.22
-ANGLE_MIN    = -125
-ANGLE_MAX    = 65  
+ANGLE_MIN    = -180
+ANGLE_MAX    = 180  
 sheet_name   = "Essai3"
-longueur     = ['86.31 mm', '137.18 mm'] 
+longueur     = ['76.131 mm', '127.001 mm'] 
+results = []
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 excel_path = os.path.join(base_dir, "Projet_2_31_mars.xlsx")
@@ -90,17 +91,27 @@ for i, col in enumerate(longueur):
         linewidth=2,
         label=f"{longueur[i]} | θ = {x_max:.2f} ± {sigma_theta:.2f}°"
     )
+    results.append({
+        "Longueur": longueur,
+        "Theta (deg)": x_max,
+        "Delta Theta (deg)": sigma_theta
+    })
 
     ax.axvline(x_max, color=vec_col[i], linestyle='--', linewidth=1.5)
 
 ax.set_xlabel("Angle (degrés)", fontsize=16)
 ax.set_ylabel("Intensité normalisée", fontsize=16)
-ax.set_xlim(ANGLE_MIN, ANGLE_MAX)
-ax.set_ylim(-0.05, 1.15)
+ax.set_xlim(-180, 180)
+ax.set_ylim(-0.5, 1.15)
 
 ax.legend(fontsize=12, loc='upper right', framealpha=0.92)
 
 plt.tight_layout()
+
+df_out   = pd.DataFrame(results)
+csv_path = os.path.join(base_dir, "theta_melange.csv")
+df_out.to_csv(csv_path, index=False)
+
 
 out_path = os.path.join(base_dir, "plot_melange.png")
 plt.savefig(out_path, dpi=600, bbox_inches='tight')

@@ -80,6 +80,7 @@ plt.xlabel("Angle (degrés)")
 plt.ylabel("Intensité normalisée")
 plt.xlim(ANGLE_MIN, ANGLE_MAX)
 plt.ylim(-0.05, 1.15)
+plt.grid()
 
 out_path = os.path.join(base_dir, "plot_melange_vide.png")
 plt.savefig(out_path, dpi=600, bbox_inches='tight')
