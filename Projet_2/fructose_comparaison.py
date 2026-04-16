@@ -154,7 +154,7 @@ for i, (longueur, col) in enumerate(colonnes_trouvees.items()):
 # ============================================================
 # PLOT FINAL
 # ============================================================
-ax.axvline(0, color='black', linewidth=1.2, linestyle='-', alpha=0.5)
+ax.axvline(0, color='black', linewidth=1.2, linestyle='-')
 
 ax.set_xlabel("Angle (degrés)", fontsize=13)
 ax.set_ylabel("Courant normalisé (u.a.)", fontsize=13)
