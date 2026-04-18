@@ -8,12 +8,12 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 # Données glucose
 longueur_glucose      = np.array([137.18, 106.65, 86.31, 65.96, 45.61])
 angle_glucose         = np.array([32.97, 25.85, 20.15, 14.72, 9.13])
-concentration_glucose = 45.45
+concentration_glucose = 0.4545
 
 # Données fructose
-longueur_fructose      = np.array([35.43, 60.78, 86.31, 111.84, 137.18])
-angle_fructose         = np.array([-10.11, -20.48, -30.53, -40.85, -52.05])
-concentration_fructose = 42.8
+longueur_fructose = np.array([25.261, 50.696, 76.131, 101.566, 127.001] )     # mm
+angle_fructose = np.array([-10.20, -20.33, -30.56, -41.04, -51.63])  # °
+concentration_fructose = 0.428
 
 # Variables composites c·ℓ
 cl_glucose  = concentration_glucose  * longueur_glucose
@@ -41,11 +41,11 @@ cl_fit_f = np.linspace(min(cl_fructose), max(cl_fructose), 100)
 
 fig, ax = plt.subplots(figsize=(10, 6))
 
-ax.scatter(cl_glucose,  angle_glucose,  color='#5A4574', s=50, zorder=3)
+ax.scatter(cl_glucose,  angle_glucose,  color='#388E3C', s=50, zorder=3)
 ax.scatter(cl_fructose, angle_fructose, color='#FF5733', s=50, zorder=3)
 
 ax.plot(cl_fit_g, regression_lineaire(cl_fit_g, alpha_sp_g),
-        color='#5A4574', linewidth=2,
+        color='#388E3C', linewidth=2,
         label=f'Glucose  $[\\alpha]$ = {alpha_sp_g:.6f} °·mL·mm⁻¹·g⁻¹')
 
 ax.plot(cl_fit_f, regression_lineaire(cl_fit_f, alpha_sp_f),
@@ -53,7 +53,7 @@ ax.plot(cl_fit_f, regression_lineaire(cl_fit_f, alpha_sp_f),
         label=f'Fructose $[\\alpha]$ = {alpha_sp_f:.6f} °·mL·mm⁻¹·g⁻¹')
 
 ax.axhline(0, color='black', linewidth=0.8, linestyle='--', alpha=0.5)
-ax.set_xlabel(r"$c \cdot \ell$  (mm·g/100 mL)", fontsize=14)
+ax.set_xlabel(r"$c \cdot \ell$  (mm·g/mL)", fontsize=14)
 ax.set_ylabel("Angle de rotation (°)", fontsize=14)
 ax.legend(fontsize=11)
 plt.tight_layout()

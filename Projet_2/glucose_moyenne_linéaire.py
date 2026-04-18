@@ -5,8 +5,8 @@ import scipy.optimize as opt
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
-longueur      = np.array([137.18, 106.65, 86.31, 65.96, 45.61])  # mm
-angle         = np.array([32.97, 25.85, 20.15, 14.72, 9.13])     # °
+longueur      = np.array([35.435, 55.783, 76.131, 96.479, 127.001])  # mm
+angle         = np.array([8.74, 15.22, 20.44, 24.66, 32.12])     # °
 concentration = 45.45  # g/100 mL
 
 # Variable composite c·ℓ (en mm·g/100mL)

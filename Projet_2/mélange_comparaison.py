@@ -91,6 +91,16 @@ for i, col in enumerate(longueur):
         linewidth=2,
         label=f"{longueur[i]} | θ = {x_max:.2f} ± {sigma_theta:.2f}°"
     )
+    ax.errorbar(
+        x_max,
+        1.0,
+        xerr=sigma_theta,
+        fmt='o',
+        color=vec_col[i],
+        capsize=10,
+        markersize=5,
+        zorder=10
+    )
     results.append({
         "Longueur": longueur,
         "Theta (deg)": x_max,

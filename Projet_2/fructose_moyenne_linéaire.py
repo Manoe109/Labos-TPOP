@@ -5,8 +5,8 @@ import scipy.optimize as opt
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
-longueur      = np.array([35.43, 60.78, 86.31, 111.84, 137.18])     # mm
-angle         = np.array([-10.11, -20.48, -30.53, -40.85, -52.05])  # °
+longueur = np.array([25.261, 50.696, 76.131, 101.566, 127.001] )     # mm
+angle = np.array([-10.20, -20.33, -30.56, -41.04, -51.63])  # °
 concentration = 42.8  # g/100 mL
 
 # Variable composite c·ℓ (en mm·g/100mL)
@@ -31,7 +31,7 @@ plt.figure(figsize=(10, 6))
 plt.scatter(cl, angle, color='black', s=50, label='Données expérimentales')
 plt.plot(cl_fit, angle_fit, color='black', linestyle='-', linewidth=2,
          label=f'Régression linéaire  $[\\alpha]$ = {alpha_sp:.6f} °·mL·mm⁻¹·g⁻¹,  b = {b:.4f}°')
-plt.xlabel(r"$c \cdot \ell$  (mm·g/100 mL)", fontsize=14)
+plt.xlabel(f"$c \cdot \ell$  (mm·g/100 mL)", fontsize=14)
 plt.ylabel("Angle de rotation (°)", fontsize=14)
 plt.legend(fontsize=11)
 plt.tight_layout()
