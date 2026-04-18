@@ -25,7 +25,7 @@ angles = angles_totaux - theta_zero
 def sinusoidal(x, A, B, phi, C):
     return A * np.sin(np.deg2rad(B * x + phi)) + C
 
-vec_col = ["#B4A8C9", "#9982BB"]
+vec_col = ["#8861CB", "#3D275F"]
 
 fig, ax = plt.subplots(figsize=(13, 7))
 
@@ -101,8 +101,8 @@ for i, col in enumerate(longueur):
 
 ax.set_xlabel("Angle (degrés)", fontsize=16)
 ax.set_ylabel("Intensité normalisée", fontsize=16)
-ax.set_xlim(-180, 180)
-ax.set_ylim(-0.5, 1.15)
+ax.set_xlim(-90, 90)
+ax.set_ylim(-0.05, 1.05)
 
 ax.legend(fontsize=12, loc='upper right', framealpha=0.92)
 
