@@ -81,12 +81,14 @@ def incertitude_alpha_fructose(conc, d_conc, angle, d_angle, long, d_long):
 
     return np.sqrt(incertitude)
 
-incertitude_finale_glucose = incertitude_alpha_glucose(concentration(masses_dilution, volumes_dilution), 
+incertitude_finale_glucose = np.sqrt(((incertitude_alpha_glucose(concentration(masses_dilution, volumes_dilution), 
         concentration_incertitude(masses_dilution, volumes_dilution), theta_glucose, delta_theta_glucose, 
-        longueur(volumes_glucose), incertitude_longueur(volumes_glucose))
-incertitude_finale_fructose = incertitude_alpha_fructose(concentration(masses_dilution, volumes_dilution), 
+        longueur(volumes_glucose), 
+        incertitude_longueur(volumes_glucose)))**2 / alpha_moy_glucose**2 + 1.03**2 / 67.42**2))
+incertitude_finale_fructose = np.sqrt((incertitude_alpha_fructose(concentration(masses_dilution, volumes_dilution), 
         concentration_incertitude(masses_dilution, volumes_dilution), theta_fructose, delta_theta_fructose, 
-        longueur(volumes_fructose), incertitude_longueur(volumes_fructose))
+        longueur(volumes_fructose), 
+        incertitude_longueur(volumes_fructose)))**2 / alpha_moy_fructose**2 + 2**2 / 302.61**2 )
 
 
 matrix = sp.Matrix([
