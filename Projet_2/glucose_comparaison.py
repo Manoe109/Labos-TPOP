@@ -9,12 +9,12 @@ from scipy.optimize import curve_fit
 # ============================================================
 theta_zero = 67.42
 ANGLE_MIN  = 0
-ANGLE_MAX  = 100
+ANGLE_MAX  = 70
 sheet_name = "Essai1"
 longueur   = ["35.435 mm", "55.783 mm", "76.131 mm", "96.479 mm", "127.001 mm"]
 results    = []
 
-vec_col = ["#B4A8C9", "#9982BB", "#916AC9", "#5A4574", '#000000']
+vec_col = ["#B4A8C9", "#9982BB", "#7E48C9", "#450297", '#000000', "#FF5733"]
 
 # ============================================================
 # CHARGEMENT
@@ -131,19 +131,26 @@ for i, col in enumerate(longueur):
     y_smooth = sinusoidal_phi_only(x_smooth, phi)
 
     ax.plot(
-        x_smooth, y_smooth,
-        color=vec_col[i], linewidth=2,
-        label=f"{col} | θ = {x_max:.2f} ± {sigma_theta:.2f}°"
-    )
+            x_smooth,
+            y_smooth,
+            color=vec_col[i],
+            linewidth=2,
+            label=f"{col} | θ = {x_max:.2f} ± {sigma_theta:.2f}°"
+        )
 
-    ax.axvline(x_max, color=vec_col[i], linestyle='--', linewidth=0.7, alpha=0.4)
+    ax.axvline(x_max, color=vec_col[i], linestyle='--', linewidth=1.3, alpha=0.7)
 
+        # barres d'erreur
     ax.errorbar(
-        x_max, 1.0,
-        xerr=sigma_theta,
-        fmt='o', color=vec_col[i],
-        capsize=10, markersize=5, zorder=10
-    )
+            x_max,
+            1.0,
+            xerr=sigma_theta,
+            fmt='o',
+            color=vec_col[i],
+            capsize=10,
+            markersize=5,
+            zorder=10
+        )
 
     print(f"{col} | θ = {x_max:.2f} ± {sigma_theta:.2f}°")
     results.append({
@@ -155,13 +162,12 @@ for i, col in enumerate(longueur):
 # ============================================================
 # MISE EN PAGE
 # ============================================================
-ax.axvline(0, color='black', linewidth=1.2, linestyle='-', alpha=0.5)
-ax.set_xlabel("Angle (degrés)", fontsize=13)
-ax.set_ylabel("Intensité normalisée", fontsize=13)
+ax.set_xlabel("Angle (degrés)", fontsize=16)
+ax.set_ylabel("Intensité normlisée", fontsize=16)
+ax.tick_params(axis='both', labelsize=14)
 ax.set_xlim(ANGLE_MIN, ANGLE_MAX)
 ax.set_ylim(-0.05, 1.15)
-ax.legend(fontsize=8.5, loc='upper right', framealpha=0.92)
-ax.grid(True, alpha=0.3)
+ax.legend(fontsize=14, loc='lower right', framealpha=0.92)
 plt.tight_layout()
 
 

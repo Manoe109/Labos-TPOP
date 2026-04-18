@@ -5,19 +5,16 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
 
-# ============================================================
 # PARAMÈTRES
-# ============================================================
 theta_zero = 302.61
-ANGLE_MIN  = -75
-ANGLE_MAX  = 15
+ANGLE_MIN  = -90
+ANGLE_MAX  = 0
 
 longueurs = ['25.261 mm',  '50.696 mm', '76.131 mm', '101.566 mm', '127.001 mm'] 
 results = []
 
-vec_col = ["#B4A8C9", "#9982BB", "#916AC9", "#5A4574", '#000000', "#FF5733"]
+vec_col = ["#B4A8C9", "#9982BB", "#7E48C9", "#450297", '#000000', "#FF5733"]
 
-# ============================================================
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 excel_path = os.path.join(base_dir, "Projet_2_31_mars.xlsx")
@@ -122,10 +119,10 @@ for i, (longueur, col) in enumerate(colonnes_trouvees.items()):
             y_smooth,
             color=vec_col[i],
             linewidth=2,
-            label=f"{longueur} mm | θ = {x_max:.2f} ± {sigma_theta:.2f}°"
+            label=f"{longueur}| θ = {x_max:.2f} ± {sigma_theta:.2f}°"
         )
 
-        ax.axvline(x_max, color=vec_col[i], linestyle='--', linewidth=0.7, alpha=0.4)
+        ax.axvline(x_max, color=vec_col[i], linestyle='--', linewidth=1.3, alpha=0.7)
 
         # barres d'erreur
         ax.errorbar(
@@ -154,15 +151,15 @@ for i, (longueur, col) in enumerate(colonnes_trouvees.items()):
 # ============================================================
 # PLOT FINAL
 # ============================================================
-ax.axvline(0, color='black', linewidth=1.2, linestyle='-')
 
-ax.set_xlabel("Angle (degrés)", fontsize=13)
-ax.set_ylabel("Courant normalisé (u.a.)", fontsize=13)
+ax.set_xlabel("Angle (degrés)", fontsize=16)
+ax.set_ylabel("Intensité normlisée", fontsize=16)
+ax.tick_params(axis='both', labelsize=14)
 ax.set_xlim(ANGLE_MIN, ANGLE_MAX)
 ax.set_ylim(-0.05, 1.15)
 
-ax.legend(fontsize=8.5, loc='upper right', framealpha=0.92)
-ax.grid(True, alpha=0.3)
+ax.legend(fontsize=14, loc='upper left', framealpha=0.92)
+ax.grid(False, alpha=0.3)
 
 plt.tight_layout()
 

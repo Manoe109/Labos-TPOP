@@ -71,9 +71,9 @@ x_smooth = np.linspace(ANGLE_MIN - 5, ANGLE_MAX + 5, 2000)
 y_smooth = sinusoidal(x_smooth, *popt)
 
 plt.figure(figsize=(10, 6))
-plt.scatter(x, y_norm, s=25, label="Données (vide)")
-plt.plot(x_smooth, y_smooth, linewidth=2, label=f"Fit | θ = {x_max:.2f}°")
-plt.axvline(x_max, linestyle='--')
+plt.scatter(x, y_norm, s=25, color='black')
+plt.plot(x_smooth, y_smooth, linewidth=2, label=f" $θ_{{max}}$ = {x_max:.2f}°", color='black')
+plt.axvline(x_max, linestyle='--', color='black')
 
 plt.xlabel("Angle (degrés)")
 plt.ylabel("Intensité normalisée")
