@@ -8,13 +8,15 @@ from scipy.optimize import curve_fit
 # PARAMÈTRES
 # ============================================================
 theta_zero = 67.42
-ANGLE_MIN  = 0
-ANGLE_MAX  = 70
+ANGLE_MIN  = -5
+ANGLE_MAX  = 69
 sheet_name = "Essai1"
 longueur   = ["35.435 mm", "55.783 mm", "76.131 mm", "96.479 mm", "127.001 mm"]
 results    = []
 
-vec_col = ["#B4A8C9", "#9982BB", "#7E48C9", "#450297", '#000000', "#FF5733"]
+vec_col = [ "#4A1800", "#8F3200", "#B85010", "#D4702A", "#E8955A", "#D4A017",]
+
+#vec_col = ["#B4A8C9", "#9982BB", "#7E48C9", "#450297", '#000000', "#FF5733"]
 
 # ============================================================
 # CHARGEMENT
@@ -162,10 +164,12 @@ for i, col in enumerate(longueur):
 # ============================================================
 # MISE EN PAGE
 # ============================================================
-ax.set_xlabel("Angle (degrés)", fontsize=16)
+ax.set_xlabel("Angle (°)", fontsize=16)
 ax.set_ylabel("Intensité normlisée", fontsize=16)
 ax.tick_params(axis='both', labelsize=14)
 ax.set_xlim(ANGLE_MIN, ANGLE_MAX)
+#ligne noire à x=0
+ax.axvline(0, color='black', linestyle='-', linewidth=1.5, zorder=2)
 ax.set_ylim(-0.05, 1.15)
 ax.legend(fontsize=14, loc='lower right', framealpha=0.92)
 plt.tight_layout()

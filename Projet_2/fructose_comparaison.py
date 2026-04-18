@@ -8,12 +8,14 @@ from scipy.optimize import curve_fit
 # PARAMÈTRES
 theta_zero = 302.61
 ANGLE_MIN  = -90
-ANGLE_MAX  = 0
+ANGLE_MAX  = 3
 
 longueurs = ['25.261 mm',  '50.696 mm', '76.131 mm', '101.566 mm', '127.001 mm'] 
 results = []
 
-vec_col = ["#B4A8C9", "#9982BB", "#7E48C9", "#450297", '#000000', "#FF5733"]
+vec_col = ["#0A2E0F", "#1B5E20","#388E3C", "#81C784", "#AFDBB1", "#FFD600"]
+
+#vec_col = ["#B4A8C9", "#9982BB", "#7E48C9", "#450297", '#000000', "#FF5733"]
 
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -152,14 +154,16 @@ for i, (longueur, col) in enumerate(colonnes_trouvees.items()):
 # PLOT FINAL
 # ============================================================
 
-ax.set_xlabel("Angle (degrés)", fontsize=16)
+ax.set_xlabel("Angle (°)", fontsize=16)
 ax.set_ylabel("Intensité normlisée", fontsize=16)
 ax.tick_params(axis='both', labelsize=14)
 ax.set_xlim(ANGLE_MIN, ANGLE_MAX)
+#ligne noire à x=0
+ax.axvline(0, color='black', linestyle='-', linewidth=1.5, zorder=2)
 ax.set_ylim(-0.05, 1.15)
 
-ax.legend(fontsize=14, loc='upper left', framealpha=0.92)
-ax.grid(False, alpha=0.3)
+ax.legend(fontsize=14, loc='lower left', framealpha=0.92)
+#ax.grid(False, alpha=0.3)
 
 plt.tight_layout()
 
