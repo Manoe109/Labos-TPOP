@@ -4,50 +4,35 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
-
 # PARAMÈTRES
 theta_zero = 302.61
 ANGLE_MIN  = -90
 ANGLE_MAX  = 3
 
-longueurs = ['25.261 mm',  '50.696 mm', '76.131 mm', '101.566 mm', '127.001 mm'] 
+longueurs = ['25.261 mm', '50.696 mm', '76.131 mm', '101.566 mm', '127.001 mm']
 results = []
 
-vec_col = ["#0A2E0F", "#1B5E20","#388E3C", "#81C784", "#AFDBB1", "#FFD600"]
-
-#vec_col = ["#B4A8C9", "#9982BB", "#7E48C9", "#450297", '#000000', "#FF5733"]
-
+vec_col = ["#0A2E0F", "#1B5E20", "#388E3C", "#81C784", "#AFDBB1", "#FFD600"]
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 excel_path = os.path.join(base_dir, "Projet_2_31_mars.xlsx")
 
 df = pd.read_excel(excel_path, sheet_name="Essai2", header=1)
-
-# nettoyage noms colonnes
 df.columns = df.columns.astype(str).str.strip()
 
 angles_raw = pd.to_numeric(df.iloc[:, 1], errors='coerce').values
 angles = angles_raw - theta_zero
 
-
 def sinusoidal(x, A, phi, C):
     return A * np.cos(np.deg2rad(2 * x + phi)) + C
 
-
 fig, ax = plt.subplots(figsize=(13, 7))
 
-
-# ============================================================
-# MATCH DES COLONNES EXCEL
-# ============================================================
 colonnes_trouvees = {
     l: next((c for c in df.columns if l in c), None)
     for l in longueurs
 }
 
-# ============================================================
-# BOUCLE PRINCIPALE
-# ============================================================
 for i, (longueur, col) in enumerate(colonnes_trouvees.items()):
 
     if col is None:
@@ -56,7 +41,6 @@ for i, (longueur, col) in enumerate(colonnes_trouvees.items()):
 
     y_raw = pd.to_numeric(df[col], errors='coerce').values
 
-    # masque propre
     mask = ~np.isnan(angles) & ~np.isnan(y_raw)
 
     if np.sum(mask) < 5:
@@ -65,7 +49,6 @@ for i, (longueur, col) in enumerate(colonnes_trouvees.items()):
     x = angles[mask]
     y = y_raw[mask]
 
-    # normalisation
     y_shifted = y - np.min(y)
     y_max = np.max(y_shifted)
 
@@ -81,19 +64,12 @@ for i, (longueur, col) in enumerate(colonnes_trouvees.items()):
         bounds = ([-1.5, -360, -0.5], [1.5, 360, 1.5])
 
         popt, pcov = curve_fit(
-            sinusoidal,
-            x,
-            y_norm,
-            p0=p0,
-            bounds=bounds,
-            maxfev=20000
+            sinusoidal, x, y_norm,
+            p0=p0, bounds=bounds, maxfev=20000
         )
 
         A, phi, C = popt
 
-        # ============================================================
-        # θ max
-        # ============================================================
         x_max = -phi / 2.0
 
         while x_max > 90:
@@ -101,44 +77,27 @@ for i, (longueur, col) in enumerate(colonnes_trouvees.items()):
         while x_max < -90:
             x_max += 180
 
-        # ============================================================
-        # INCERTITUDE CORRIGÉE
-        # ============================================================
-        if pcov is not None:
-            dphi = np.sqrt(pcov[1, 1])
-        else:
-            dphi = np.nan
-
+        dphi = np.sqrt(pcov[1, 1]) if pcov is not None else np.nan
         sigma_theta = 0.5 * dphi
-
-        # ============================================================
 
         x_smooth = np.linspace(ANGLE_MIN - 5, ANGLE_MAX + 5, 2000)
         y_smooth = sinusoidal(x_smooth, *popt)
 
         ax.plot(
-            x_smooth,
-            y_smooth,
-            color=vec_col[i],
-            linewidth=2,
-            label=f"{longueur}| θ = {x_max:.2f} ± {sigma_theta:.2f}°"
+            x_smooth, y_smooth,
+            color=vec_col[i], linewidth=2,
+            label=f"{longueur} | θ = {x_max:.2f} ± {sigma_theta:.2f}°"
         )
 
         ax.axvline(x_max, color=vec_col[i], linestyle='--', linewidth=1.3, alpha=0.7)
 
-        # barres d'erreur
         ax.errorbar(
-            x_max,
-            1.0,
-            xerr=sigma_theta,
-            fmt='o',
-            color=vec_col[i],
-            capsize=10,
-            markersize=5,
-            zorder=10
+            x_max, 1.0, xerr=sigma_theta,
+            fmt='o', color=vec_col[i],
+            capsize=10, markersize=5, zorder=10
         )
 
-        print(f"{longueur} mm | θ = {x_max:.2f} ± {sigma_theta:.2f}°")
+        print(f"{longueur} | θ = {x_max:.2f} ± {sigma_theta:.2f}°")
 
         results.append({
             "Longueur": longueur,
@@ -149,34 +108,22 @@ for i, (longueur, col) in enumerate(colonnes_trouvees.items()):
     except RuntimeError:
         print(f"Curve fit échoué pour : {longueur}")
 
-
 # ============================================================
 # PLOT FINAL
 # ============================================================
-
-ax.set_xlabel("Angle (°)", fontsize=16)
-ax.set_ylabel("Intensité normlisée", fontsize=16)
-ax.tick_params(axis='both', labelsize=14)
+ax.set_xlabel("Angle (°)", fontsize=18)
+ax.set_ylabel("Intensité normalisée", fontsize=18)
+ax.tick_params(axis='both', labelsize=16)
 ax.set_xlim(ANGLE_MIN, ANGLE_MAX)
-#ligne noire à x=0
 ax.axvline(0, color='black', linestyle='-', linewidth=1.5, zorder=2)
 ax.set_ylim(-0.05, 1.15)
-
-ax.legend(fontsize=14, loc='lower left', framealpha=0.92)
-#ax.grid(False, alpha=0.3)
-
+ax.legend(fontsize=15, loc='lower left', framealpha=0.92)
 plt.tight_layout()
 
-# ============================================================
-# EXPORT
-# ============================================================
-out_path = os.path.join(base_dir, "plot_fructose.png")
 df_out = pd.DataFrame(results)
-
 csv_path = os.path.join(base_dir, "theta_fructose.csv")
 df_out.to_csv(csv_path, index=False)
 
 out_path = os.path.join(base_dir, "plot_fructose.png")
 plt.savefig(out_path, dpi=600, bbox_inches='tight')
-
 plt.show()
