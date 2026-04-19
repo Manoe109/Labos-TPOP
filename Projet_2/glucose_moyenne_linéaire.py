@@ -24,13 +24,29 @@ sigma_b        = np.sqrt(pcov[1, 1])
 print(f"Pouvoir rotatoire spécifique [α] = {alpha_sp:.6f} ± {sigma_alpha_sp:.6f} °·(100 mL)·mm⁻¹·g⁻¹")
 print(f"Ordonnée à l'origine          b  = {b:.6f} ± {sigma_b:.6f} °")
 
+def reg_min(x):
+    y = (alpha_sp - sigma_alpha_sp) * x + (b - sigma_b)
+    return y
+x_reg_min = np.linspace(0, 6000, 6000)
+y_reg_min = reg_min(x_reg_min)
+
+
+def reg_max(x):
+    y = (alpha_sp + sigma_alpha_sp) * x + (b + sigma_b)
+    return y
+x_reg_max = np.linspace(0, 6000, 6000)
+y_reg_max = reg_max(x_reg_max)
+
+
 cl_fit    = np.linspace(min(cl), max(cl), 100)
 angle_fit = alpha_sp * cl_fit + b
 
 plt.figure(figsize=(10, 6))
 plt.scatter(cl, angle, color='black', s=50, label='Données expérimentales')
-plt.plot(cl_fit, angle_fit, color='black', linestyle='-', linewidth=2,
+plt.plot(cl_fit, angle_fit, color='black', linestyle='-', linewidth=1.5,
          label=f'Régression linéaire  $[\\alpha]$ = {alpha_sp:.6f} °·(100 mL)·mm⁻¹·g⁻¹,  b = {b:.4f}°')
+plt.plot(x_reg_min, y_reg_min, color="black", linestyle='--', linewidth=1, label=f'Régression linéaire avec incertitudes')
+plt.plot(x_reg_max, y_reg_max, color="black", linestyle='--', linewidth=1)
 plt.xlabel(r"$c \cdot \ell$  (mm·g/100 mL)", fontsize=16)
 plt.ylabel("Angle de rotation (°)", fontsize=16)
 plt.tick_params(axis='both', labelsize=14)
