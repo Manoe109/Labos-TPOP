@@ -99,7 +99,7 @@ for i, col in enumerate(longueur):
         y_smooth,
         color=vec_col[i],
         linewidth=2,
-        label=f"{col} | θ = {x_max:.2f} ± {sigma_theta:.2f}°"
+        label=f"{col} | θ = {x_max:.1f} ± {sigma_theta:.1f}°"
     )
 
     ax.axvline(x_max, color=vec_col[i], linestyle='--', linewidth=1.3, alpha=0.7)

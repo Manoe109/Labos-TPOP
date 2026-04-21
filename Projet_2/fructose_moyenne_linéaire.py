@@ -21,15 +21,19 @@ b              = popt[1]
 sigma_alpha_sp = np.sqrt(pcov[0, 0])
 sigma_b        = np.sqrt(pcov[1, 1])
 
+residuals = angle - regression_lineaire(cl, *popt)
+r2 = 1 - np.sum(residuals**2) / np.sum((angle - np.mean(angle))**2)
+
 print(f"Pouvoir rotatoire spécifique [α] = {alpha_sp:.1f} ± {sigma_alpha_sp:.1f} °·mL·dm⁻¹·g⁻¹")
 print(f"Ordonnée à l'origine          b  = {b:.1f} ± {sigma_b:.1f} °")
+print(f"Coefficient de détermination  R² = {r2:.6f}")
 
 x_fit = np.linspace(0, max(cl) * 1.1, 500)
 
 plt.figure(figsize=(10, 6))
 plt.scatter(cl, angle, color='black', s=50, label='Données expérimentales')
 plt.plot(x_fit, alpha_sp * x_fit + b, color='black', linestyle='-', linewidth=1.5,
-         label=f'Régression linéaire  $[\\alpha]$ = {alpha_sp:.1f} °·mL·dm⁻¹·g⁻¹,  b = {b:.1f}°')
+         label=f'Régression linéaire  $[\\alpha]$ = {alpha_sp:.1f} °·mL·dm⁻¹·g⁻¹,  b = {b:.1f}°,  $R^2$ = {r2:.3f}')
 plt.plot(x_fit, (alpha_sp - sigma_alpha_sp) * x_fit + (b - sigma_b),
          color="black", linestyle='--', linewidth=1, label='Régression avec incertitudes')
 plt.plot(x_fit, (alpha_sp + sigma_alpha_sp) * x_fit + (b + sigma_b),
