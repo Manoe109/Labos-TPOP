@@ -25,7 +25,8 @@ angles = angles_totaux - theta_zero
 def sinusoidal(x, A, B, phi, C):
     return A * np.sin(np.deg2rad(B * x + phi)) + C
 
-vec_col = ["#8861CB", "#3D275F"]
+vec_col = ["#E53935", "#00ACC1"]
+line_styles = [(0, (5, 1)), (0, (5, 1, 1, 1, 1, 1))]
 
 fig, ax = plt.subplots(figsize=(13, 7))
 
@@ -83,6 +84,7 @@ for i, col in enumerate(longueur):
     ax.plot(
         x_smooth, y_smooth,
         color=vec_col[i], linewidth=2,
+        linestyle=line_styles[i],
         label=f"{longueur[i]} | θ = {x_max:.2f} ± {sigma_theta:.2f}°"
     )
     ax.errorbar(
@@ -96,7 +98,7 @@ for i, col in enumerate(longueur):
         "Delta Theta (deg)": sigma_theta
     })
 
-    ax.axvline(x_max, color=vec_col[i], linestyle='--', linewidth=1.5)
+    ax.axvline(x_max, color=vec_col[i], linestyle=line_styles[i], linewidth=1.5)
 
 ax.set_xlabel("Angle (degrés)", fontsize=18)
 ax.set_ylabel("Intensité normalisée", fontsize=18)

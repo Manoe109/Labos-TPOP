@@ -6,13 +6,14 @@ from scipy.optimize import curve_fit
 
 # PARAMÈTRES
 theta_zero = 302.61
-ANGLE_MIN  = -90
-ANGLE_MAX  = 3
+ANGLE_MIN  = -99
+ANGLE_MAX  = 6
 
 longueurs = ['25.261 mm', '50.696 mm', '76.131 mm', '101.566 mm', '127.001 mm']
 results = []
 
-vec_col = ["#0A2E0F", "#1B5E20", "#388E3C", "#81C784", "#8EB190", "#FFD600"]
+vec_col = ["#0A2E0F", "#1B5E20", "#388E3C", "#68B86B", "#81C784"]
+line_styles = ['-', (5, (10, 3)), '-.', '--', (0, (3, 1, 1, 1))]
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 excel_path = os.path.join(base_dir, "Projet_2_31_mars.xlsx")
@@ -86,6 +87,7 @@ for i, (longueur, col) in enumerate(colonnes_trouvees.items()):
         ax.plot(
             x_smooth, y_smooth,
             color=vec_col[i], linewidth=2,
+            linestyle=line_styles[i],
             label=f"{longueur} | θ = {x_max:.1f} ± {sigma_theta:.1f}°"
         )
 

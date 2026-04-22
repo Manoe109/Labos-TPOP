@@ -15,6 +15,7 @@ longueur   = ["35.435 mm", "55.783 mm", "76.131 mm", "96.479 mm", "127.001 mm"]
 results    = []
 
 vec_col = [ "#4A1800", "#8F3200", "#B85010", "#D4702A", "#E8955A", "#D4A017",]
+line_styles = ['-', (5, (10, 3)), '-.', '--', (0, (3, 1, 1, 1))]
 
 # ============================================================
 # CHARGEMENT
@@ -98,6 +99,7 @@ for i, col in enumerate(longueur):
         x_smooth,
         y_smooth,
         color=vec_col[i],
+        linestyle=line_styles[i],
         linewidth=2,
         label=f"{col} | θ = {x_max:.1f} ± {sigma_theta:.1f}°"
     )
