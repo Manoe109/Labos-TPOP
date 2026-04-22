@@ -5,11 +5,11 @@ import scipy.optimize as opt
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
-longueur      = np.array([35.435, 55.783, 76.131, 96.479, 127.001])  # mm
-angle         = np.array([8.74, 15.22, 20.44, 24.66, 32.12])     # °
-concentration = 45.45  # g/100 mL
+longueur      = np.array([35.435, 55.783, 76.131, 96.479, 127.001]) / 100  # mm → dm
+angle         = np.array([8.74, 15.22, 20.44, 24.66, 32.12])               # °
+concentration = 45.45 / 100  # g/100 mL → g/mL
 
-# Variable composite c·ℓ (en mm·g/100mL)
+# Variable composite c·ℓ (en dm·g/mL)
 cl = concentration * longueur
 
 def regression_lineaire(x, alpha_sp, b):
@@ -21,33 +21,24 @@ b              = popt[1]
 sigma_alpha_sp = np.sqrt(pcov[0, 0])
 sigma_b        = np.sqrt(pcov[1, 1])
 
-print(f"Pouvoir rotatoire spécifique [α] = {alpha_sp:.6f} ± {sigma_alpha_sp:.6f} °·(100 mL)·mm⁻¹·g⁻¹")
-print(f"Ordonnée à l'origine          b  = {b:.6f} ± {sigma_b:.6f} °")
+residuals = angle - regression_lineaire(cl, *popt)
+r2 = 1 - np.sum(residuals**2) / np.sum((angle - np.mean(angle))**2)
 
-def reg_min(x):
-    y = (alpha_sp - sigma_alpha_sp) * x + (b - sigma_b)
-    return y
-x_reg_min = np.linspace(0, 6000, 6000)
-y_reg_min = reg_min(x_reg_min)
+print(f"Pouvoir rotatoire spécifique [α] = {alpha_sp:.0f} ± {sigma_alpha_sp:.1f} °·mL·dm⁻¹·g⁻¹")
+print(f"Ordonnée à l'origine          b  = {b:.1f} ± {sigma_b:.1f} °")
+print(f"Coefficient de détermination  R² = {r2:.6f}")
 
-
-def reg_max(x):
-    y = (alpha_sp + sigma_alpha_sp) * x + (b + sigma_b)
-    return y
-x_reg_max = np.linspace(0, 6000, 6000)
-y_reg_max = reg_max(x_reg_max)
-
-
-cl_fit    = np.linspace(min(cl), max(cl), 100)
-angle_fit = alpha_sp * cl_fit + b
+x_fit = np.linspace(0, max(cl) * 1.1, 500)
 
 plt.figure(figsize=(10, 6))
 plt.scatter(cl, angle, color='black', s=50, label='Données expérimentales')
-plt.plot(cl_fit, angle_fit, color='black', linestyle='-', linewidth=1.5,
-         label=f'Régression linéaire  $[\\alpha]$ = {alpha_sp:.6f} °·(100 mL)·mm⁻¹·g⁻¹,  b = {b:.4f}°')
-plt.plot(x_reg_min, y_reg_min, color="black", linestyle='--', linewidth=1, label=f'Régression linéaire avec incertitudes')
-plt.plot(x_reg_max, y_reg_max, color="black", linestyle='--', linewidth=1)
-plt.xlabel(r"$c \cdot \ell$  (mm·g/100 mL)", fontsize=16)
+plt.plot(x_fit, alpha_sp * x_fit + b, color='black', linestyle='-', linewidth=1.5,
+         label=f'Régression linéaire  $[\\alpha]$ = {alpha_sp:.0f} °·mL·dm⁻¹·g⁻¹,  b = {b:.1f}°,  $R^2$ = {r2:.3f}')
+plt.plot(x_fit, (alpha_sp - sigma_alpha_sp) * x_fit + (b - sigma_b),
+         color="black", linestyle='--', linewidth=1, label='Régression avec incertitudes')
+plt.plot(x_fit, (alpha_sp + sigma_alpha_sp) * x_fit + (b + sigma_b),
+         color="black", linestyle='--', linewidth=1)
+plt.xlabel(r"$c \cdot \ell$  (dm·g/mL)", fontsize=16)
 plt.ylabel("Angle de rotation (°)", fontsize=16)
 plt.tick_params(axis='both', labelsize=14)
 plt.legend(fontsize=13)

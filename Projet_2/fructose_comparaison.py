@@ -12,7 +12,7 @@ ANGLE_MAX  = 3
 longueurs = ['25.261 mm', '50.696 mm', '76.131 mm', '101.566 mm', '127.001 mm']
 results = []
 
-vec_col = ["#0A2E0F", "#1B5E20", "#388E3C", "#81C784", "#AFDBB1", "#FFD600"]
+vec_col = ["#0A2E0F", "#1B5E20", "#388E3C", "#81C784", "#8EB190", "#FFD600"]
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 excel_path = os.path.join(base_dir, "Projet_2_31_mars.xlsx")
@@ -86,7 +86,7 @@ for i, (longueur, col) in enumerate(colonnes_trouvees.items()):
         ax.plot(
             x_smooth, y_smooth,
             color=vec_col[i], linewidth=2,
-            label=f"{longueur} | θ = {x_max:.2f} ± {sigma_theta:.2f}°"
+            label=f"{longueur} | θ = {x_max:.1f} ± {sigma_theta:.1f}°"
         )
 
         ax.axvline(x_max, color=vec_col[i], linestyle='--', linewidth=1.3, alpha=0.7)
